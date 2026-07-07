@@ -128,7 +128,9 @@ function injectPageNav(doc: Document) {
       'display:flex',
       'flex-direction:column',
       'gap:8px',
-      'margin:32px 0 8px',
+      // Margine inferiore ampio: la barra è l'ultimo elemento del testo e, scrollando
+      // in fondo, finirebbe a ridosso della toolbar dell'app → spazio per non premerla.
+      'margin:32px 0 48px',
       'padding-top:16px',
       'border-top:1px solid currentColor',
       'opacity:0.95',
