@@ -1,3 +1,4 @@
+import type { Ref } from 'react'
 import { useStore, type PanelId } from '../store'
 import type { PersistState } from '../hooks/usePersistence'
 import { goBack } from '../utils/readerControl'
@@ -72,28 +73,32 @@ export function TopBar({ persist }: { persist: PersistState }) {
   )
 }
 
-export function BottomBar() {
+export function BottomBar({ navRef }: { navRef?: Ref<HTMLElement> }) {
   const openPanel = useStore((s) => s.openPanel)
   const setPanel = useStore((s) => s.setPanel)
   return (
-    // Sfondo più chiaro (panel-2) + bordo e ombra verso l'alto: così la barra si
-    // legge come una barra piena attaccata al fondo. Fondamentale su iPhone, dove
-    // `pb-safe` aggiunge la clearance dell'home-indicator: senza questo contrasto
-    // quello spazio sembrava pagina vuota e la toolbar pareva "staccata".
-    <nav className="pb-safe shrink-0 border-t border-[var(--color-line)] bg-[var(--color-panel-2)] shadow-[0_-6px_16px_rgba(0,0,0,0.45)]">
-      <div className="grid grid-cols-5 gap-1 px-1 py-1">
+    // Toolbar INCOLLATA al fondo con `absolute bottom-0` (dentro la shell relative,
+    // che arriva al bordo fisico). Sfondo panel-2 + bordo/ombra = barra piena e
+    // distinta. La clearance dell'home-indicator è ridotta (env - 10px) per non
+    // farla troppo alta, mantenendo le icone sopra l'indicatore.
+    <nav
+      ref={navRef}
+      className="absolute inset-x-0 bottom-0 z-10 border-t border-[var(--color-line)] bg-[var(--color-panel-2)] shadow-[0_-6px_16px_rgba(0,0,0,0.45)]"
+      style={{ paddingBottom: 'max(calc(env(safe-area-inset-bottom) - 10px), 6px)' }}
+    >
+      <div className="grid grid-cols-5 gap-1 px-1 py-0.5">
         {PANELS.map((p) => (
           <button
             key={p.id}
             onClick={() => setPanel(p.id)}
-            className={`touch flex flex-col items-center justify-center rounded-lg py-1 text-[10px] ${
+            className={`flex min-h-[44px] flex-col items-center justify-center gap-0.5 rounded-lg py-1 text-[10px] leading-none ${
               openPanel === p.id
-                ? 'bg-[var(--color-panel-2)] text-[var(--color-gold)]'
-                : 'text-[var(--color-ink)]/70 active:bg-[var(--color-panel-2)]'
+                ? 'bg-[var(--color-panel)] text-[var(--color-gold)]'
+                : 'text-[var(--color-ink)]/70 active:bg-[var(--color-panel)]'
             }`}
             aria-label={p.label}
           >
-            <span className="text-xl">{p.icon}</span>
+            <span className="text-lg leading-none">{p.icon}</span>
             <span>{p.label}</span>
           </button>
         ))}

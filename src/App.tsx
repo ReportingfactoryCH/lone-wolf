@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import type { Rendition, Book } from 'epubjs'
 import { useStore } from './store'
 import { usePersistence } from './hooks/usePersistence'
@@ -31,6 +31,23 @@ export default function App() {
 
   const { data, loading, error } = useBookData(view === 'reader' ? bookId : null)
 
+  // La toolbar è posizionata ASSOLUTA in fondo alla shell (vedi sotto): è fuori
+  // dal flusso, quindi `main` non le riserva spazio da solo. Misuriamo l'altezza
+  // reale della toolbar e la esponiamo come `--footer-h`, usata come padding-bottom
+  // di `main` così il testo del reader non finisce mai sotto la toolbar.
+  const shellRef = useRef<HTMLDivElement>(null)
+  const navRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const nav = navRef.current
+    const shell = shellRef.current
+    if (!nav || !shell) return
+    const sync = () => shell.style.setProperty('--footer-h', `${nav.offsetHeight}px`)
+    sync()
+    const ro = new ResizeObserver(sync)
+    ro.observe(nav)
+    return () => ro.disconnect()
+  }, [view])
+
   // Identità STABILE (dipende solo da bookId/azioni stabili) → non rompe il memo del Reader.
   const onReady = useCallback(
     async (rendition: Rendition, book: Book) => {
@@ -61,14 +78,20 @@ export default function App() {
   }
 
   return (
-    // App shell a `height:100%` (via la catena html/body/#root, tutti a 100%).
-    // Colonna flex: header, area di lettura (flex-1, min-h-0 per non farla sforare),
-    // toolbar in fondo. `min-h-0` è il fix canonico che evita che l'iframe alto di
-    // epub.js impedisca a `main` di restringersi.
-    <div className="h-full flex flex-col">
-      <TopBar persist={persist} />
+    // Shell a `height:100%` e `relative`: fa da contesto di posizionamento per la
+    // toolbar assoluta. `#root` (height:100%) arriva al bordo fisico dello schermo
+    // anche in standalone su iOS (misurato: rootBottom = fondo viewport), quindi la
+    // toolbar `absolute bottom-0` è incollata al fondo VERO — a differenza di un
+    // `fixed`, che in standalone iOS si ferma sopra l'home-indicator.
+    <div ref={shellRef} className="relative h-full">
+      <div className="flex h-full flex-col">
+        <TopBar persist={persist} />
 
-      <main className="relative flex-1 min-h-0 overflow-hidden">
+        {/* padding-bottom = altezza reale della toolbar, così il testo non ci finisce sotto */}
+        <main
+          className="relative flex-1 min-h-0 overflow-hidden"
+          style={{ paddingBottom: 'var(--footer-h, 64px)' }}
+        >
         {loading && (
           <div className="flex h-full items-center justify-center text-[var(--color-gold-dim)]">Caricamento…</div>
         )}
@@ -84,9 +107,11 @@ export default function App() {
             onReady={onReady}
           />
         )}
-      </main>
+        </main>
+      </div>
 
-      <BottomBar />
+      {/* Toolbar assoluta: incollata al bordo inferiore della shell (fondo fisico). */}
+      <BottomBar navRef={navRef} />
 
       {/* Pannelli full-screen sheet */}
       {openPanel === 'number' && <NumberGenerator onClose={() => setPanel(null)} />}
