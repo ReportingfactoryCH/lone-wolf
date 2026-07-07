@@ -21,10 +21,7 @@
 html, body, #root {
   margin: 0;
   height: 100%;
-  /* DIAGNOSTICO TEMPORANEO: body blu per capire se la striscia sotto il footer
-     in PWA standalone è il <body> (→ blu) o l'area di sistema iOS (→ resta
-     marrone). Da ripristinare a var(--color-parchment). */
-  background: #1e3aff;
+  background: var(--color-parchment);
   color: var(--color-ink);
   font-family: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
   -webkit-font-smoothing: antialiased;
