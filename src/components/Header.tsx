@@ -76,7 +76,10 @@ export function BottomBar() {
   const openPanel = useStore((s) => s.openPanel)
   const setPanel = useStore((s) => s.setPanel)
   return (
-    <nav className="pb-safe shrink-0 border-t border-[var(--color-line)] bg-[var(--color-panel)]">
+    <nav
+      className="pb-safe shrink-0 border-t border-[var(--color-line)] bg-[var(--color-panel)]"
+      style={{ outline: '3px solid yellow', outlineOffset: '-3px' }}
+    >
       <div className="grid grid-cols-5 gap-1 px-1 py-1">
         {PANELS.map((p) => (
           <button

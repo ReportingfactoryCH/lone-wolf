@@ -66,10 +66,13 @@ export default function App() {
     // viewport "sicuro" e lasciano scoperto il <body> nella zona home-indicator
     // (striscia sotto il footer). Il 100% invece copre fino al bordo fisico, così
     // il footer tocca il fondo e il suo `pb-safe` alza le icone sopra l'indicatore.
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col" style={{ outline: '3px solid red', outlineOffset: '-3px' }}>
       <TopBar persist={persist} />
 
-      <main className="relative flex-1 overflow-hidden">
+      <main
+        className="relative flex-1 min-h-0 overflow-hidden"
+        style={{ outline: '3px solid cyan', outlineOffset: '-3px' }}
+      >
         {loading && (
           <div className="flex h-full items-center justify-center text-[var(--color-gold-dim)]">Caricamento…</div>
         )}
