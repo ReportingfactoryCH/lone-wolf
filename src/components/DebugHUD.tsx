@@ -19,7 +19,6 @@ export function DebugHUD() {
     const measure = () => {
       const nav = document.querySelector('nav')
       const navB = nav ? Math.round(nav.getBoundingClientRect().bottom) : -1
-      const vv = window.visualViewport
       setInfo(
         [
           `build ${__BUILD_ID__}`,
