@@ -1,0 +1,12 @@
+node_modules
+dist
+dist-ssr
+.git
+.idea
+.vscode
+.claude
+.playwright-mcp
+*.epub
+*.local
+npm-debug.log*
+.DS_Store
