@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { registerSW } from 'virtual:pwa-register'
 import './index.css'
 import App from './App'
+import { OrientationGate } from './components/OrientationGate'
 
 // Service worker (offline-first).
 if (import.meta.env.DEV) {
@@ -33,5 +34,6 @@ if (import.meta.env.DEV) {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
+    <OrientationGate />
   </StrictMode>,
 )

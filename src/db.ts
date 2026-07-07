@@ -79,6 +79,9 @@ export interface WarLogEntry {
   ts: number
   type: 'navigation' | 'combat' | 'roll' | 'note'
   text: string
+  // Bersaglio di navigazione opzionale → rende l'evento cliccabile nel registro.
+  section?: string // numero di sezione (navigateToSection)
+  cfi?: string // posizione esatta epub.js (goToCfi: link href o segnalibro)
 }
 
 export interface Playthrough {

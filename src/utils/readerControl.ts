@@ -46,7 +46,10 @@ export function setReaderControl(rendition: Rendition | null, sectionIndex: Sect
     // Inietta la barra di navigazione in coda a OGNI sezione renderizzata.
     // 'rendered' scatta a ogni cambio sezione → la barra è sempre presente.
     rendition.on('rendered', (_section: unknown, view: { document?: Document }) => {
-      if (view?.document) injectPageNav(view.document)
+      if (view?.document) {
+        injectPageNav(view.document)
+        injectImageZoom(view.document)
+      }
     })
   }
 }
@@ -182,4 +185,43 @@ function injectPageNav(doc: Document) {
   bar.appendChild(row1)
   bar.appendChild(row2)
   doc.body.appendChild(bar)
+}
+
+// --- Tap sulle immagini → apertura nel lightbox a tutto schermo --------------
+// Le immagini dell'EPUB sono <img> dentro l'iframe. Al tap ne ricaviamo un URL
+// utilizzabile dal parent (fetch del blob → object URL; fallback canvas → dataURL)
+// e lo passiamo allo store, che mostra il lightbox React.
+
+async function imageToParentUrl(img: HTMLImageElement, doc: Document): Promise<string | null> {
+  const src = img.currentSrc || img.src
+  try {
+    const blob = await fetch(src).then((r) => r.blob())
+    return URL.createObjectURL(blob)
+  } catch {
+    // Fallback: ridisegna su canvas (same-origin → non tainted) e usa un dataURL.
+    try {
+      const canvas = doc.createElement('canvas')
+      canvas.width = img.naturalWidth
+      canvas.height = img.naturalHeight
+      canvas.getContext('2d')?.drawImage(img, 0, 0)
+      return canvas.toDataURL('image/png')
+    } catch {
+      return null
+    }
+  }
+}
+
+function injectImageZoom(doc: Document) {
+  const imgs = doc.querySelectorAll<HTMLImageElement>('img:not([data-lupo-zoom])')
+  imgs.forEach((img) => {
+    img.dataset.lupoZoom = '1'
+    img.style.cursor = 'zoom-in'
+    img.addEventListener('click', async (e) => {
+      // Apriamo lo zoom invece di seguire un eventuale link che avvolge l'immagine.
+      e.preventDefault()
+      e.stopPropagation()
+      const url = await imageToParentUrl(img, doc)
+      if (url) useStore.getState().openLightbox(url)
+    })
+  })
 }

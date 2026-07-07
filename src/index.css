@@ -68,3 +68,28 @@ input, textarea, select, button {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
 }
+
+/* Vincolo portrait.
+   La PWA installata è già forzata da manifest `orientation: portrait`. Nel
+   browser su iOS non esiste un vero lock, quindi in landscape su schermi piccoli
+   (telefoni) mostriamo un invito a ruotare. La soglia max-height evita di
+   bloccare desktop/tablet, dove il landscape è legittimo. */
+.landscape-gate {
+  display: none;
+}
+@media (orientation: landscape) and (max-height: 520px) {
+  .landscape-gate {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    text-align: center;
+    background: var(--color-parchment);
+    color: var(--color-ink);
+  }
+}

@@ -85,7 +85,7 @@ export function sectionFromHref(href: string | undefined | null): string | null 
  */
 export function attachLinkInterceptor(
   rendition: Rendition,
-  onInternalLink: (sectionOrHref: string) => void,
+  onInternalLink: (info: { section: string | null; href: string }) => void,
 ): void {
   try {
     // hooks.content: viene eseguito per ogni documento renderizzato.
@@ -97,8 +97,7 @@ export function attachLinkInterceptor(
       doc.querySelectorAll('a[href]').forEach((a) => {
         a.addEventListener('click', () => {
           const href = (a as HTMLAnchorElement).getAttribute('href') || ''
-          const sect = sectionFromHref(href)
-          onInternalLink(sect ?? href)
+          onInternalLink({ section: sectionFromHref(href), href })
         })
       })
     })

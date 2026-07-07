@@ -22,6 +22,7 @@ interface AppState {
   openPanel: PanelId
   darkMode: boolean
   fontSize: number // percentuale per il reader
+  lightboxSrc: string | null // immagine aperta a tutto schermo (object URL)
 
   // navigazione app
   openReader: (bookId: number, playthroughId: number) => Promise<void>
@@ -29,6 +30,8 @@ interface AppState {
   setPanel: (p: PanelId) => void
   toggleDark: () => void
   setFontSize: (f: number) => void
+  openLightbox: (src: string) => void
+  closeLightbox: () => void
 
   // mutazioni del playthrough (tutte persistono)
   patchPlaythrough: (patch: Partial<Playthrough>, opts?: { debounce?: boolean }) => void
@@ -61,6 +64,7 @@ export const useStore = create<AppState>((set, get) => ({
   openPanel: null,
   darkMode: true,
   fontSize: 100,
+  lightboxSrc: null,
 
   openReader: async (bookId, playthroughId) => {
     const pt = await db.playthroughs.get(playthroughId)
@@ -75,6 +79,19 @@ export const useStore = create<AppState>((set, get) => ({
   toggleDark: () => set((s) => ({ darkMode: !s.darkMode })),
 
   setFontSize: (f) => set({ fontSize: Math.max(70, Math.min(180, f)) }),
+
+  openLightbox: (src) =>
+    set((s) => {
+      // Revoca un eventuale URL precedente prima di sostituirlo (no leak).
+      if (s.lightboxSrc && s.lightboxSrc.startsWith('blob:')) URL.revokeObjectURL(s.lightboxSrc)
+      return { lightboxSrc: src }
+    }),
+
+  closeLightbox: () =>
+    set((s) => {
+      if (s.lightboxSrc && s.lightboxSrc.startsWith('blob:')) URL.revokeObjectURL(s.lightboxSrc)
+      return { lightboxSrc: null }
+    }),
 
   patchPlaythrough: (patch, opts) => {
     const cur = get().playthrough

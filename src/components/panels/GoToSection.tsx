@@ -31,7 +31,7 @@ export function GoToSection({ onClose }: { onClose: () => void }) {
     if (!num) return
     const ok = await navigateToSection(num)
     if (ok) {
-      addWarLog({ type: 'navigation', text: `Vai alla sezione ${num}` })
+      addWarLog({ type: 'navigation', text: `Vai alla sezione ${num}`, section: num })
       setPanel(null)
     } else {
       setErr(`Sezione ${num} non trovata (o reader non pronto).`)
@@ -59,7 +59,7 @@ export function GoToSection({ onClose }: { onClose: () => void }) {
   const jumpTo = async (bm: Bookmark) => {
     const ok = await goToCfi(bm.cfi)
     if (ok) {
-      addWarLog({ type: 'navigation', text: `Segnalibro → ${bm.label}` })
+      addWarLog({ type: 'navigation', text: `Segnalibro → ${bm.label}`, cfi: bm.cfi })
       setPanel(null)
     } else {
       setAddErr('Reader non pronto: riprova.')

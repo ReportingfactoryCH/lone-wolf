@@ -8,8 +8,12 @@ import { VitePWA } from 'vite-plugin-pwa'
 // Nessuna risorsa da CDN: tutto è bundlato per garantire il funzionamento offline.
 export default defineConfig({
   // Porta di default per dev (`npm run dev`) e preview (`npm run preview`).
-  server: { port: 4200 },
-  preview: { port: 4200 },
+  // host: true → bind su 0.0.0.0 (tutte le interfacce) così l'app è raggiungibile
+  // dallo smartphone sulla stessa rete (es. http://192.168.x.x:4200).
+  // allowedHosts: autorizza i tunnel cloudflared (sottodominio casuale ogni volta)
+  // e ngrok, per il test PWA in HTTPS da telefono.
+  server: { port: 4200, host: true, allowedHosts: ['.trycloudflare.com', '.ngrok-free.app'] },
+  preview: { port: 4200, host: true, allowedHosts: ['.trycloudflare.com', '.ngrok-free.app'] },
   plugins: [
     react(),
     tailwindcss(),

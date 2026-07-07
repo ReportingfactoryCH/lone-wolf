@@ -2,80 +2,267 @@
 // Combat Results Table (CRT) — Lupo Solitario / Lone Wolf
 // ===========================================================================
 //
-//  ⚠️  TEMPLATE — VALORI NON COMPILATI  ⚠️
+// Valori trascritti dalla Combat Results Table ufficiale (Project Aon).
+// In ogni cella della tabella cartacea:
+//   • numero in ALTO a SINISTRA = Endurance persa dal NEMICO (enemyLoss)
+//   • numero in BASSO a DESTRA   = Endurance persa da LUPO SOLITARIO (lwLoss)
+//   • "K" = morte istantanea (Killed) → qui rappresentato dalla sentinella K.
 //
-// I valori esatti della CRT provengono dai materiali ufficiali di PROJECT AON
-// (https://www.projectaon.org), pubblicati con licenza. NON sono stati inseriti
-// qui per non inventare numeri non verificati.
+// Le righe sono il numero estratto 0–9 (indice dell'array = numero estratto;
+// results[0] = riga "0", results[1] = riga "1", … results[9] = riga "9").
+// Le colonne sono i bucket di Combat Ratio (LW CS − nemico CS).
 //
-// COME COMPILARLA:
-// 1. Apri la Combat Results Table dal libro (Appendice / "How To Fight Creatures
-//    Of Darkness") su Project Aon.
-// 2. Per ogni RIGA (bucket di Combat Ratio) e ogni COLONNA (numero estratto 0–9)
-//    inserisci la coppia { lwLoss, enemyLoss } indicata dalla tabella.
-//    - lwLoss   = punti Endurance persi da Lupo Solitario quel round
-//    - enemyLoss= punti Endurance persi dal nemico quel round
-//    - Usa il valore speciale `K` (importato sotto) per "morte istantanea"
-//      (nella tabella cartacea spesso indicato come "K" = Killed).
-//
-// Finché i valori restano `null`, l'helper di combattimento funziona comunque:
-// segnala che la CRT non è disponibile e lascia l'utente inserire i danni a mano
-// (vedi src/utils/combat.ts e components/panels/Combat.tsx).
+// NB: i valori restano PROPOSTE. L'helper di combattimento li suggerisce e
+// l'utente può sempre accettarli, correggerli o ignorarli (vedi Combat.tsx).
 // ===========================================================================
 
 /** Sentinella per "morte istantanea" (Killed) in una cella della CRT. */
 export const K = Infinity
 
 export interface CrtResult {
-  /** Endurance persa da Lupo Solitario in questo round. */
+  /** Endurance persa da Lupo Solitario in questo round. (K = morte istantanea.) */
   lwLoss: number
-  /** Endurance persa dal nemico in questo round. (Usa K per morte istantanea.) */
+  /** Endurance persa dal nemico in questo round. (K = morte istantanea.) */
   enemyLoss: number
 }
 
-/**
- * Bucket di Combat Ratio della CRT classica, dal più sfavorevole a LW al più
- * favorevole. Ogni bucket copre un intervallo di Combat Ratio (LW CS − nemico CS).
- *
- * I limiti qui sotto seguono la struttura standard della tabella; restano dati
- * da verificare su Project Aon ma NON sono "valori di gioco" (sono solo i confini
- * delle righe), quindi sono indicati come riferimento. Modificali se la tua
- * edizione differisce.
- */
 export interface CrtBucket {
   /** Estremo inferiore del Combat Ratio incluso (può essere -Infinity). */
   min: number
   /** Estremo superiore del Combat Ratio incluso (può essere +Infinity). */
   max: number
-  /** Etichetta leggibile, es. "-11 o meno", "0 / -1", "+11 o più". */
+  /** Etichetta leggibile, es. "−11 o meno", "0", "+11 o più". */
   label: string
-  /**
-   * 10 risultati, uno per numero estratto 0..9 (indice = numero estratto).
-   * `null` = cella non ancora compilata dall'utente.
-   *
-   * TODO(Project Aon): sostituire ogni `null` con { lwLoss, enemyLoss }.
-   */
-  results: Array<CrtResult | null>
+  /** 10 risultati, indice = numero estratto 0..9. results[0] = riga "0". */
+  results: CrtResult[]
 }
 
-const empty10 = (): Array<CrtResult | null> => [null, null, null, null, null, null, null, null, null, null]
+/** Helper compatto: r(lwLoss, enemyLoss). */
+const r = (lwLoss: number, enemyLoss: number): CrtResult => ({ lwLoss, enemyLoss })
 
-// Struttura delle righe della CRT standard di Lupo Solitario.
-// (Solo i confini dei bucket; le celle dei danni sono da compilare.)
+// Ogni array è indicizzato per numero estratto: [0]=riga"0", [1..9]=righe 1..9.
 export const CRT: CrtBucket[] = [
-  { min: -Infinity, max: -11, label: '−11 o meno', results: empty10() },
-  { min: -10, max: -9, label: '−10 / −9', results: empty10() },
-  { min: -8, max: -7, label: '−8 / −7', results: empty10() },
-  { min: -6, max: -5, label: '−6 / −5', results: empty10() },
-  { min: -4, max: -3, label: '−4 / −3', results: empty10() },
-  { min: -2, max: -1, label: '−2 / −1', results: empty10() },
-  { min: 0, max: 1, label: '0 / +1', results: empty10() },
-  { min: 2, max: 3, label: '+2 / +3', results: empty10() },
-  { min: 4, max: 5, label: '+4 / +5', results: empty10() },
-  { min: 6, max: 7, label: '+6 / +7', results: empty10() },
-  { min: 8, max: 9, label: '+8 / +9', results: empty10() },
-  { min: 10, max: 11, label: '+10 / +11', results: empty10() },
-  { min: 12, max: Infinity, label: '+12 o più', results: empty10() },
+  {
+    min: -Infinity,
+    max: -11,
+    label: '−11 o meno',
+    results: [
+      r(0, 6), // 0
+      r(K, 0), // 1
+      r(K, 0), // 2
+      r(8, 0), // 3
+      r(8, 0), // 4
+      r(7, 1), // 5
+      r(6, 2), // 6
+      r(5, 3), // 7
+      r(4, 4), // 8
+      r(3, 5), // 9
+    ],
+  },
+  {
+    min: -10,
+    max: -9,
+    label: '−10 / −9',
+    results: [
+      r(0, 7), // 0
+      r(K, 0), // 1
+      r(8, 0), // 2
+      r(7, 0), // 3
+      r(7, 1), // 4
+      r(6, 2), // 5
+      r(6, 3), // 6
+      r(5, 4), // 7
+      r(4, 5), // 8
+      r(3, 6), // 9
+    ],
+  },
+  {
+    min: -8,
+    max: -7,
+    label: '−8 / −7',
+    results: [
+      r(0, 8), // 0
+      r(8, 0), // 1
+      r(7, 0), // 2
+      r(6, 1), // 3
+      r(6, 2), // 4
+      r(5, 3), // 5
+      r(5, 4), // 6
+      r(4, 5), // 7
+      r(3, 6), // 8
+      r(2, 7), // 9
+    ],
+  },
+  {
+    min: -6,
+    max: -5,
+    label: '−6 / −5',
+    results: [
+      r(0, 9), // 0
+      r(6, 0), // 1
+      r(6, 1), // 2
+      r(5, 2), // 3
+      r(5, 3), // 4
+      r(4, 4), // 5
+      r(4, 5), // 6
+      r(3, 6), // 7
+      r(2, 7), // 8
+      r(0, 8), // 9
+    ],
+  },
+  {
+    min: -4,
+    max: -3,
+    label: '−4 / −3',
+    results: [
+      r(0, 10), // 0
+      r(6, 1), // 1
+      r(5, 2), // 2
+      r(5, 3), // 3
+      r(4, 4), // 4
+      r(4, 5), // 5
+      r(3, 6), // 6
+      r(2, 7), // 7
+      r(1, 8), // 8
+      r(0, 9), // 9
+    ],
+  },
+  {
+    min: -2,
+    max: -1,
+    label: '−2 / −1',
+    results: [
+      r(0, 11), // 0
+      r(5, 2), // 1
+      r(5, 3), // 2
+      r(4, 4), // 3
+      r(4, 5), // 4
+      r(3, 6), // 5
+      r(2, 7), // 6
+      r(2, 8), // 7
+      r(1, 9), // 8
+      r(0, 10), // 9
+    ],
+  },
+  {
+    min: 0,
+    max: 0,
+    label: '0',
+    results: [
+      r(0, 12), // 0
+      r(5, 3), // 1
+      r(4, 4), // 2
+      r(4, 5), // 3
+      r(3, 6), // 4
+      r(2, 7), // 5
+      r(2, 8), // 6
+      r(1, 9), // 7
+      r(0, 10), // 8
+      r(0, 11), // 9
+    ],
+  },
+  {
+    min: 1,
+    max: 2,
+    label: '+1 / +2',
+    results: [
+      r(0, 14), // 0
+      r(5, 4), // 1
+      r(4, 5), // 2
+      r(3, 6), // 3
+      r(3, 7), // 4
+      r(2, 8), // 5
+      r(2, 9), // 6
+      r(1, 10), // 7
+      r(0, 11), // 8
+      r(0, 12), // 9
+    ],
+  },
+  {
+    min: 3,
+    max: 4,
+    label: '+3 / +4',
+    results: [
+      r(0, 16), // 0
+      r(4, 5), // 1
+      r(3, 6), // 2
+      r(3, 7), // 3
+      r(2, 8), // 4
+      r(2, 9), // 5
+      r(2, 10), // 6
+      r(1, 11), // 7
+      r(0, 12), // 8
+      r(0, 14), // 9
+    ],
+  },
+  {
+    min: 5,
+    max: 6,
+    label: '+5 / +6',
+    results: [
+      r(0, 18), // 0
+      r(4, 6), // 1
+      r(3, 7), // 2
+      r(3, 8), // 3
+      r(2, 9), // 4
+      r(2, 10), // 5
+      r(1, 11), // 6
+      r(0, 12), // 7
+      r(0, 14), // 8
+      r(0, 16), // 9
+    ],
+  },
+  {
+    min: 7,
+    max: 8,
+    label: '+7 / +8',
+    results: [
+      r(0, K), // 0
+      r(4, 7), // 1
+      r(3, 8), // 2
+      r(2, 9), // 3
+      r(2, 10), // 4
+      r(2, 11), // 5
+      r(1, 12), // 6
+      r(0, 14), // 7
+      r(0, 16), // 8
+      r(0, 18), // 9
+    ],
+  },
+  {
+    min: 9,
+    max: 10,
+    label: '+9 / +10',
+    results: [
+      r(0, K), // 0
+      r(3, 8), // 1
+      r(3, 9), // 2
+      r(2, 10), // 3
+      r(2, 11), // 4
+      r(2, 12), // 5
+      r(1, 14), // 6
+      r(0, 16), // 7
+      r(0, 18), // 8
+      r(0, K), // 9
+    ],
+  },
+  {
+    min: 11,
+    max: Infinity,
+    label: '+11 o più',
+    results: [
+      r(0, K), // 0
+      r(3, 9), // 1
+      r(2, 10), // 2
+      r(2, 11), // 3
+      r(2, 12), // 4
+      r(1, 14), // 5
+      r(1, 16), // 6
+      r(0, 18), // 7
+      r(0, K), // 8
+      r(0, K), // 9
+    ],
+  },
 ]
 
 /** Trova il bucket di CRT per un dato Combat Ratio. */
@@ -84,10 +271,8 @@ export function bucketForRatio(ratio: number): CrtBucket | undefined {
 }
 
 /**
- * Restituisce il risultato CRT proposto, oppure null se:
- * - il bucket non esiste, oppure
- * - la cella non è ancora stata compilata (template non popolato).
- * In entrambi i casi l'helper di combattimento ricade sull'inserimento manuale.
+ * Restituisce il risultato CRT proposto, oppure null se il bucket non esiste
+ * o il numero estratto è fuori range. In tal caso l'helper ricade sull'inserimento manuale.
  */
 export function lookupCrt(ratio: number, randomNumber: number): CrtResult | null {
   if (randomNumber < 0 || randomNumber > 9) return null
@@ -96,7 +281,7 @@ export function lookupCrt(ratio: number, randomNumber: number): CrtResult | null
   return bucket.results[randomNumber] ?? null
 }
 
-/** true se almeno una cella della CRT è stata compilata (per avvisi UI). */
+/** true se la CRT è compilata (ora sempre vera; mantenuto per gli avvisi UI). */
 export function crtIsPopulated(): boolean {
-  return CRT.some((b) => b.results.some((r) => r !== null))
+  return CRT.some((b) => b.results.length > 0)
 }

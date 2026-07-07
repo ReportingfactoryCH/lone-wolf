@@ -5,6 +5,7 @@ import { usePersistence } from './hooks/usePersistence'
 import { useBookData } from './hooks/useBookUrl'
 import { Library } from './components/Library'
 import { Reader } from './components/Reader'
+import { Lightbox } from './components/Lightbox'
 import { TopBar, BottomBar } from './components/Header'
 import { NumberGenerator } from './components/panels/NumberGenerator'
 import { ActionChart } from './components/panels/ActionChart'
@@ -42,9 +43,14 @@ export default function App() {
         if (rec) await db.books.update(bookId, { sectionIndex: index })
       }
       setReaderControl(rendition, index)
-      // Logga i salti sui link interni (senza impedirne la navigazione).
-      attachLinkInterceptor(rendition, (sectionOrHref) => {
-        addWarLog({ type: 'navigation', text: `Link → sezione ${sectionOrHref}` })
+      // Logga i salti sui link interni (senza impedirne la navigazione), con il
+      // bersaglio così l'evento è ri-cliccabile dal registro.
+      attachLinkInterceptor(rendition, ({ section, href }) => {
+        addWarLog(
+          section
+            ? { type: 'navigation', text: `Link → sezione ${section}`, section }
+            : { type: 'navigation', text: `Link → ${href}`, cfi: href },
+        )
       })
     },
     [bookId, addWarLog],
@@ -85,6 +91,9 @@ export default function App() {
       {openPanel === 'warlog' && <WarLog onClose={() => setPanel(null)} />}
       {openPanel === 'combat' && <Combat onClose={() => setPanel(null)} />}
       {openPanel === 'goto' && <GoToSection onClose={() => setPanel(null)} />}
+
+      {/* Lightbox immagini (mappe ecc.): si auto-nasconde se nessuna immagine aperta. */}
+      <Lightbox />
     </div>
   )
 }

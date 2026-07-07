@@ -1,5 +1,6 @@
 import { useStore, type PanelId } from '../store'
 import type { PersistState } from '../hooks/usePersistence'
+import { goBack } from '../utils/readerControl'
 
 // Header superiore compatto + barra azioni inferiore nella thumb-zone.
 // Entrambi rispettano le safe-area (notch / home indicator).
@@ -18,7 +19,6 @@ export function TopBar({ persist }: { persist: PersistState }) {
   const toggleDark = useStore((s) => s.toggleDark)
   const fontSize = useStore((s) => s.fontSize)
   const setFontSize = useStore((s) => s.setFontSize)
-  const name = useStore((s) => s.playthrough?.name)
 
   const persistDot =
     persist === 'granted' ? '🟢' : persist === 'denied' ? '🟡' : persist === 'unsupported' ? '⚪️' : '⏳'
@@ -33,7 +33,14 @@ export function TopBar({ persist }: { persist: PersistState }) {
         >
           ‹ Libreria
         </button>
-        <span className="flex-1 truncate text-sm text-[var(--color-ink)]/70">{name}</span>
+        <button
+          className="touch flex items-center justify-center rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 active:bg-[var(--color-line)]"
+          onClick={() => goBack()}
+          aria-label="Indietro nella cronologia di lettura"
+        >
+          ↩ Back
+        </button>
+        <span className="flex-1" />
         <span title={`Persistenza storage: ${persist}`} className="text-xs">
           {persistDot}
         </span>

@@ -254,6 +254,9 @@ function ActiveCombat({
       addWarLog({ type: 'combat', text: `Fine combattimento contro ${cur.enemyName} (${outcome})` })
     }
     setCombat(null) // chiude lo scontro; il war log conserva il riassunto
+    // Chiude il pannello e torna al reader (pagina da cui si era aperto il
+    // combattimento): NON ricade nella schermata "Nuovo combattimento".
+    onClose()
   }
 
   const history = [...combat.history].reverse()
@@ -350,8 +353,8 @@ function ActiveCombat({
             </div>
           ) : (
             <p className="text-sm text-[var(--color-ink)]/70">
-              Proposta CRT: LW −{proposal?.lwLoss}, Nemico −
-              {isFinite(proposal?.enemyLoss ?? 0) ? proposal?.enemyLoss : 'MORTE'}
+              Proposta CRT: LW {isFinite(proposal?.lwLoss ?? 0) ? `−${proposal?.lwLoss}` : 'MORTE'}, Nemico{' '}
+              {isFinite(proposal?.enemyLoss ?? 0) ? `−${proposal?.enemyLoss}` : 'MORTE'}
             </p>
           )}
 

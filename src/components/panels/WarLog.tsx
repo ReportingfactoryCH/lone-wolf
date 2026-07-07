@@ -3,6 +3,7 @@ import { Sheet } from '../Sheet'
 import { useStore } from '../../store'
 import type { WarLogEntry } from '../../db'
 import { exportPlaythrough, importPlaythrough } from '../../utils/saveExport'
+import { navigateToSection, goToCfi } from '../../utils/readerControl'
 
 const ICONS: Record<WarLogEntry['type'], string> = {
   navigation: '🧭',
@@ -31,6 +32,14 @@ export function WarLog({ onClose }: { onClose: () => void }) {
     if (!v) return
     addWarLog({ type: 'note', text: v })
     setNote('')
+  }
+
+  // Naviga al bersaglio di un evento (se presente) e chiude il registro.
+  const goEntry = async (e: WarLogEntry) => {
+    let ok = false
+    if (e.section) ok = await navigateToSection(e.section)
+    else if (e.cfi) ok = await goToCfi(e.cfi)
+    if (ok) onClose()
   }
 
   const onImportFile = async (file: File) => {
@@ -108,7 +117,17 @@ export function WarLog({ onClose }: { onClose: () => void }) {
           >
             <span aria-hidden>{ICONS[e.type]}</span>
             <div className="flex-1">
-              <div className="text-sm text-[var(--color-ink)]">{e.text}</div>
+              {e.section || e.cfi ? (
+                <button
+                  className="touch -my-1 text-left text-sm font-medium text-[var(--color-gold)] underline decoration-dotted underline-offset-2 active:text-[var(--color-gold-dim)]"
+                  onClick={() => void goEntry(e)}
+                  aria-label={`Vai a: ${e.text}`}
+                >
+                  {e.text} ›
+                </button>
+              ) : (
+                <div className="text-sm text-[var(--color-ink)]">{e.text}</div>
+              )}
               <div className="text-xs text-[var(--color-ink)]/40">{fmtTime(e.ts)}</div>
             </div>
           </li>
