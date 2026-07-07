@@ -65,7 +65,10 @@ export default function App() {
     // in standalone su iOS il 100dvh si risolve contro un viewport che esclude
     // l'home-indicator, lasciando una striscia sotto il footer. Con fixed inset-0
     // la shell riempie il viewport visuale reale e il footer tocca il fondo.
-    <div className="fixed inset-0 flex flex-col">
+    <div className="fixed inset-0 flex flex-col" style={{ background: '#39ff14' }}>
+      {/* DIAGNOSTICO TEMPORANEO: sfondo verde della shell. Se la striscia sotto il
+          footer appare verde → il gap è dentro la nostra pagina (layout). Se resta
+          scura → è l'area di sistema iOS fuori dalla web view. Da rimuovere. */}
       <TopBar persist={persist} />
 
       <main className="relative flex-1 overflow-hidden">
