@@ -1,22 +1,24 @@
 import { useStore, type PanelId } from '../store'
 import type { PersistState } from '../hooks/usePersistence'
 import { goBack } from '../utils/readerControl'
+import { useT } from '../i18n/useT'
+import type { TKey } from '../i18n'
 
 // Header superiore compatto + barra azioni inferiore nella thumb-zone.
 // Entrambi rispettano le safe-area (notch / home indicator).
 
-const PANELS: { id: Exclude<PanelId, null>; icon: string; label: string }[] = [
-  { id: 'number', icon: '🎲', label: 'Numero' },
-  { id: 'chart', icon: '📋', label: 'Chart' },
-  { id: 'inventory', icon: '🎒', label: 'Zaino' },
-  { id: 'warlog', icon: '📜', label: 'Registro' },
-  { id: 'combat', icon: '⚔️', label: 'Combatti' },
+const PANELS: { id: Exclude<PanelId, null>; icon: string; label: TKey }[] = [
+  { id: 'number', icon: '🎲', label: 'nav.number' },
+  { id: 'chart', icon: '📋', label: 'nav.chart' },
+  { id: 'inventory', icon: '🎒', label: 'nav.inventory' },
+  { id: 'warlog', icon: '📜', label: 'nav.warlog' },
+  { id: 'combat', icon: '⚔️', label: 'nav.combat' },
 ]
 
 export function TopBar({ persist }: { persist: PersistState }) {
+  const t = useT()
   const goLibrary = useStore((s) => s.goLibrary)
-  const darkMode = useStore((s) => s.darkMode)
-  const toggleDark = useStore((s) => s.toggleDark)
+  const setPanel = useStore((s) => s.setPanel)
   const fontSize = useStore((s) => s.fontSize)
   const setFontSize = useStore((s) => s.setFontSize)
 
@@ -29,43 +31,43 @@ export function TopBar({ persist }: { persist: PersistState }) {
         <button
           className="touch flex items-center justify-center rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 active:bg-[var(--color-line)]"
           onClick={goLibrary}
-          aria-label="Torna alla libreria"
+          aria-label={t('top.library')}
         >
-          ‹ Libreria
+          ‹ {t('top.library')}
         </button>
         <button
           className="touch flex items-center justify-center rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 active:bg-[var(--color-line)]"
           onClick={() => goBack()}
-          aria-label="Indietro nella cronologia di lettura"
+          aria-label={t('top.backAria')}
         >
-          ↩ Back
+          ↩ {t('top.back')}
         </button>
         <span className="flex-1" />
-        <span title={`Persistenza storage: ${persist}`} className="text-xs">
+        <span title={`storage: ${persist}`} className="text-xs">
           {persistDot}
         </span>
         <div className="flex items-center overflow-hidden rounded-lg border border-[var(--color-line)]">
           <button
             className="touch px-3 text-sm active:bg-[var(--color-line)]"
             onClick={() => setFontSize(fontSize - 10)}
-            aria-label="Riduci testo"
+            aria-label={t('top.smaller')}
           >
             A−
           </button>
           <button
             className="touch px-3 text-sm active:bg-[var(--color-line)]"
             onClick={() => setFontSize(fontSize + 10)}
-            aria-label="Ingrandisci testo"
+            aria-label={t('top.larger')}
           >
             A+
           </button>
         </div>
         <button
           className="touch flex items-center justify-center rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 active:bg-[var(--color-line)]"
-          onClick={toggleDark}
-          aria-label="Tema chiaro/scuro"
+          onClick={() => setPanel('settings')}
+          aria-label={t('top.settingsAria')}
         >
-          {darkMode ? '☀️' : '🌙'}
+          ⚙️
         </button>
       </div>
     </header>
@@ -73,6 +75,7 @@ export function TopBar({ persist }: { persist: PersistState }) {
 }
 
 export function BottomBar() {
+  const t = useT()
   const openPanel = useStore((s) => s.openPanel)
   const setPanel = useStore((s) => s.setPanel)
   return (
@@ -94,10 +97,10 @@ export function BottomBar() {
                 ? 'bg-[var(--color-panel)] text-[var(--color-gold)]'
                 : 'text-[var(--color-ink)]/70 active:bg-[var(--color-panel)]'
             }`}
-            aria-label={p.label}
+            aria-label={t(p.label)}
           >
             <span className="text-lg leading-none">{p.icon}</span>
-            <span>{p.label}</span>
+            <span>{t(p.label)}</span>
           </button>
         ))}
       </div>

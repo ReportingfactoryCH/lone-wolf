@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { Sheet } from '../Sheet'
 import { useStore } from '../../store'
+import { useT } from '../../i18n/useT'
 import type { WarLogEntry } from '../../db'
 import { exportPlaythrough, importPlaythrough } from '../../utils/saveExport'
 import { navigateToSection, goToCfi } from '../../utils/readerControl'
@@ -12,12 +13,15 @@ const ICONS: Record<WarLogEntry['type'], string> = {
   note: '📝',
 }
 
-function fmtTime(ts: number): string {
+function fmtTime(ts: number, locale: string): string {
   const d = new Date(ts)
-  return d.toLocaleString('it-IT', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })
+  return d.toLocaleString(locale, { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })
 }
 
 export function WarLog({ onClose }: { onClose: () => void }) {
+  const t = useT()
+  const lang = useStore((s) => s.lang)
+  const locale = lang === 'it' ? 'it-IT' : 'en-GB'
   const playthrough = useStore((s) => s.playthrough)
   const addWarLog = useStore((s) => s.addWarLog)
   const [note, setNote] = useState('')
@@ -45,19 +49,15 @@ export function WarLog({ onClose }: { onClose: () => void }) {
   const onImportFile = async (file: File) => {
     try {
       const res = await importPlaythrough(file)
-      setMsg(
-        res.bookKnown
-          ? 'Salvataggio importato come nuova partita.'
-          : 'Importato (libro originale assente: associato a un libro esistente).',
-      )
+      setMsg(res.bookKnown ? t('log.importedNew') : t('log.importedFallback'))
     } catch (e) {
-      setMsg(`Import fallito: ${String(e)}`)
+      setMsg(t('log.importFailed', { err: String(e) }))
     }
   }
 
   return (
     <Sheet
-      title="Registro di guerra"
+      title={t('log.title')}
       icon="📜"
       onClose={onClose}
       footer={
@@ -65,7 +65,7 @@ export function WarLog({ onClose }: { onClose: () => void }) {
           <div className="flex gap-2">
             <input
               className="touch w-full rounded-lg border border-[var(--color-line)] bg-[var(--color-panel)] px-3 text-[var(--color-ink)]"
-              placeholder="Aggiungi una nota…"
+              placeholder={t('log.notePlaceholder')}
               value={note}
               onChange={(e) => setNote(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && addNote()}
@@ -74,7 +74,7 @@ export function WarLog({ onClose }: { onClose: () => void }) {
               className="touch rounded-lg border border-[var(--color-gold-dim)] bg-[var(--color-panel-2)] px-4 font-semibold text-[var(--color-gold)] active:bg-[var(--color-line)]"
               onClick={addNote}
             >
-              Aggiungi
+              {t('log.add')}
             </button>
           </div>
           <div className="flex gap-2">
@@ -82,13 +82,13 @@ export function WarLog({ onClose }: { onClose: () => void }) {
               className="touch flex-1 rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 text-sm active:bg-[var(--color-line)]"
               onClick={() => exportPlaythrough(playthrough)}
             >
-              ⬇︎ Esporta salvataggio
+              ⬇︎ {t('log.export')}
             </button>
             <button
               className="touch flex-1 rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 text-sm active:bg-[var(--color-line)]"
               onClick={() => fileRef.current?.click()}
             >
-              ⬆︎ Importa salvataggio
+              ⬆︎ {t('log.import')}
             </button>
             <input
               ref={fileRef}
@@ -108,7 +108,7 @@ export function WarLog({ onClose }: { onClose: () => void }) {
     >
       <ul className="flex flex-col gap-2">
         {entries.length === 0 && (
-          <li className="py-8 text-center text-sm text-[var(--color-ink)]/50">Nessun evento ancora.</li>
+          <li className="py-8 text-center text-sm text-[var(--color-ink)]/50">{t('log.empty')}</li>
         )}
         {entries.map((e, i) => (
           <li
@@ -121,14 +121,14 @@ export function WarLog({ onClose }: { onClose: () => void }) {
                 <button
                   className="touch -my-1 text-left text-sm font-medium text-[var(--color-gold)] underline decoration-dotted underline-offset-2 active:text-[var(--color-gold-dim)]"
                   onClick={() => void goEntry(e)}
-                  aria-label={`Vai a: ${e.text}`}
+                  aria-label={t('log.goToAria', { text: e.text })}
                 >
                   {e.text} ›
                 </button>
               ) : (
                 <div className="text-sm text-[var(--color-ink)]">{e.text}</div>
               )}
-              <div className="text-xs text-[var(--color-ink)]/40">{fmtTime(e.ts)}</div>
+              <div className="text-xs text-[var(--color-ink)]/40">{fmtTime(e.ts, locale)}</div>
             </div>
           </li>
         ))}

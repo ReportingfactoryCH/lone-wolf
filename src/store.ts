@@ -6,6 +6,7 @@ import {
   type CombatState,
   type WarLogEntry,
 } from './db'
+import { detectLang, type Lang } from './i18n'
 
 // ---------------------------------------------------------------------------
 // Stato globale (Zustand). Sorgente di verità in-memory del playthrough attivo;
@@ -13,7 +14,7 @@ import {
 // con debounce (vedi persist()/scheduleSave) per non scrivere ad ogni scroll.
 // ---------------------------------------------------------------------------
 
-export type PanelId = 'number' | 'chart' | 'inventory' | 'warlog' | 'combat' | 'goto' | null
+export type PanelId = 'number' | 'chart' | 'inventory' | 'warlog' | 'combat' | 'goto' | 'settings' | null
 
 interface AppState {
   view: 'library' | 'reader'
@@ -23,6 +24,7 @@ interface AppState {
   darkMode: boolean
   fontSize: number // percentuale per il reader
   lightboxSrc: string | null // immagine aperta a tutto schermo (object URL)
+  lang: Lang // lingua UI (persistita in localStorage)
 
   // navigazione app
   openReader: (bookId: number, playthroughId: number) => Promise<void>
@@ -30,6 +32,7 @@ interface AppState {
   setPanel: (p: PanelId) => void
   toggleDark: () => void
   setFontSize: (f: number) => void
+  setLang: (l: Lang) => void
   openLightbox: (src: string) => void
   closeLightbox: () => void
 
@@ -65,6 +68,7 @@ export const useStore = create<AppState>((set, get) => ({
   darkMode: true,
   fontSize: 100,
   lightboxSrc: null,
+  lang: detectLang(),
 
   openReader: async (bookId, playthroughId) => {
     const pt = await db.playthroughs.get(playthroughId)
@@ -79,6 +83,15 @@ export const useStore = create<AppState>((set, get) => ({
   toggleDark: () => set((s) => ({ darkMode: !s.darkMode })),
 
   setFontSize: (f) => set({ fontSize: Math.max(70, Math.min(180, f)) }),
+
+  setLang: (l) => {
+    try {
+      localStorage.setItem('lupo-lang', l)
+    } catch {
+      /* localStorage non disponibile: la lingua resta comunque in memoria */
+    }
+    set({ lang: l })
+  },
 
   openLightbox: (src) =>
     set((s) => {

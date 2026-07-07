@@ -13,9 +13,12 @@ import { Inventory } from './components/panels/Inventory'
 import { WarLog } from './components/panels/WarLog'
 import { Combat } from './components/panels/Combat'
 import { GoToSection } from './components/panels/GoToSection'
+import { Settings } from './components/panels/Settings'
 import { db } from './db'
 import { buildSectionIndex, attachLinkInterceptor } from './utils/sections'
 import { setReaderControl } from './utils/readerControl'
+import { translate } from './i18n'
+import { useT } from './i18n/useT'
 
 export default function App() {
   const { state: persist } = usePersistence()
@@ -28,6 +31,7 @@ export default function App() {
   const setPanel = useStore((s) => s.setPanel)
   const setLocation = useStore((s) => s.setLocation)
   const addWarLog = useStore((s) => s.addWarLog)
+  const t = useT()
 
   const { data, loading, error } = useBookData(view === 'reader' ? bookId : null)
 
@@ -46,10 +50,11 @@ export default function App() {
       // Logga i salti sui link interni (senza impedirne la navigazione), con il
       // bersaglio così l'evento è ri-cliccabile dal registro.
       attachLinkInterceptor(rendition, ({ section, href }) => {
+        const lang = useStore.getState().lang
         addWarLog(
           section
-            ? { type: 'navigation', text: `Link → sezione ${section}`, section }
-            : { type: 'navigation', text: `Link → ${href}`, cfi: href },
+            ? { type: 'navigation', text: translate(lang, 'log.linkSection', { n: section }), section }
+            : { type: 'navigation', text: translate(lang, 'log.linkHref', { href }), cfi: href },
         )
       })
     },
@@ -57,7 +62,13 @@ export default function App() {
   )
 
   if (view === 'library' || bookId == null || !playthrough) {
-    return <Library persist={persist} />
+    return (
+      <>
+        <Library persist={persist} />
+        {/* Impostazioni raggiungibili anche dalla Libreria */}
+        {openPanel === 'settings' && <Settings onClose={() => setPanel(null)} />}
+      </>
+    )
   }
 
   return (
@@ -70,7 +81,9 @@ export default function App() {
 
       <main className="relative flex-1 min-h-0 overflow-hidden">
         {loading && (
-          <div className="flex h-full items-center justify-center text-[var(--color-gold-dim)]">Caricamento…</div>
+          <div className="flex h-full items-center justify-center text-[var(--color-gold-dim)]">
+            {t('reader.loading')}
+          </div>
         )}
         {error && <div className="flex h-full items-center justify-center text-[var(--color-blood)]">{error}</div>}
         {data && (
@@ -95,6 +108,7 @@ export default function App() {
       {openPanel === 'warlog' && <WarLog onClose={() => setPanel(null)} />}
       {openPanel === 'combat' && <Combat onClose={() => setPanel(null)} />}
       {openPanel === 'goto' && <GoToSection onClose={() => setPanel(null)} />}
+      {openPanel === 'settings' && <Settings onClose={() => setPanel(null)} />}
 
       {/* Lightbox immagini (mappe ecc.): si auto-nasconde se nessuna immagine aperta. */}
       <Lightbox />

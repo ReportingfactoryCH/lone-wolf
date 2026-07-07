@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useT } from '../i18n/useT'
 
 // Primitive UI condivise, mobile-first: target ≥44px, input 16px (niente zoom iOS),
 // inputMode numerico per il tastierino. Tutto editabile a mano, sempre.
@@ -19,6 +20,7 @@ export function Stepper({
   warn?: string
   min?: number
 }) {
+  const t = useT()
   return (
     <div className="flex flex-col gap-1">
       {label && (
@@ -31,7 +33,7 @@ export function Stepper({
         <button
           className="touch rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 text-xl active:bg-[var(--color-line)]"
           onClick={() => onChange(value - 1)}
-          aria-label="Diminuisci"
+          aria-label={t('common.decrease')}
         >
           −
         </button>
@@ -53,14 +55,14 @@ export function Stepper({
         <button
           className="touch rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 text-xl active:bg-[var(--color-line)]"
           onClick={() => onChange(value + 1)}
-          aria-label="Aumenta"
+          aria-label={t('common.increase')}
         >
           +
         </button>
       </div>
       {warn && <span className="text-xs text-[var(--color-blood)]">{warn}</span>}
       {min !== undefined && value < min && (
-        <span className="text-xs text-[var(--color-blood)]">Sotto il riferimento ({min})</span>
+        <span className="text-xs text-[var(--color-blood)]">{t('common.belowRef', { min })}</span>
       )}
     </div>
   )
@@ -100,7 +102,7 @@ export function EditableList({
   items,
   onChange,
   softMax,
-  addPlaceholder = 'Nuova voce…',
+  addPlaceholder,
 }: {
   title: string
   items: string[]
@@ -108,8 +110,10 @@ export function EditableList({
   softMax?: number
   addPlaceholder?: string
 }) {
+  const t = useT()
   const [draft, setDraft] = useState('')
   const over = softMax !== undefined && items.length > softMax
+  const placeholder = addPlaceholder ?? t('common.newItem')
 
   const add = () => {
     const v = draft.trim()
@@ -125,7 +129,7 @@ export function EditableList({
         {softMax !== undefined && (
           <span className={`text-xs ${over ? 'text-[var(--color-blood)]' : 'text-[var(--color-gold-dim)]'}`}>
             {items.length}/{softMax}
-            {over && ' • oltre il limite'}
+            {over && ` • ${t('common.overLimit')}`}
           </span>
         )}
       </div>
@@ -145,20 +149,20 @@ export function EditableList({
             <button
               className="touch rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 active:bg-[var(--color-line)]"
               onClick={() => onChange(items.filter((_, j) => j !== i))}
-              aria-label="Rimuovi"
+              aria-label={t('common.remove')}
             >
               🗑
             </button>
           </li>
         ))}
-        {items.length === 0 && <li className="text-sm text-[var(--color-ink)]/50">Nessuna voce.</li>}
+        {items.length === 0 && <li className="text-sm text-[var(--color-ink)]/50">{t('common.noItems')}</li>}
       </ul>
 
       <div className="mt-2 flex items-center gap-2">
         <input
           className="touch w-full rounded-lg border border-[var(--color-line)] bg-[var(--color-panel)] px-3 text-[var(--color-ink)]"
           value={draft}
-          placeholder={addPlaceholder}
+          placeholder={placeholder}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') add()

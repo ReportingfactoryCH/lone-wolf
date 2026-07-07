@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useStore } from '../store'
+import { useT } from '../i18n/useT'
 
 // Blocca il pinch-zoom NATIVO solo dentro l'elemento passato (non globalmente,
 // così lo zoom di accessibilità nel resto dell'app resta).
@@ -33,6 +34,7 @@ function blockPinch(el: HTMLElement): () => void {
 // Zoom con i pulsanti +/− o doppio tap; pan tramite scroll nativo quando è
 // ingrandita (ottimo su iOS). Chiusura con ✕ o tap sullo sfondo.
 export function Lightbox() {
+  const t = useT()
   const src = useStore((s) => s.lightboxSrc)
   const close = useStore((s) => s.closeLightbox)
   const [zoom, setZoom] = useState(1) // 1 = adatta alla larghezza
@@ -72,7 +74,7 @@ export function Lightbox() {
           <button
             className="touch flex items-center justify-center rounded-lg border border-white/30 bg-white/10 px-4 text-xl text-white active:bg-white/20"
             onClick={dec}
-            aria-label="Riduci zoom"
+            aria-label={t('box.zoomOut')}
           >
             −
           </button>
@@ -80,7 +82,7 @@ export function Lightbox() {
           <button
             className="touch flex items-center justify-center rounded-lg border border-white/30 bg-white/10 px-4 text-xl text-white active:bg-white/20"
             onClick={inc}
-            aria-label="Aumenta zoom"
+            aria-label={t('box.zoomIn')}
           >
             +
           </button>
@@ -88,7 +90,7 @@ export function Lightbox() {
         <button
           className="touch flex items-center justify-center rounded-lg border border-white/30 bg-white/10 px-4 text-xl text-white active:bg-white/20"
           onClick={close}
-          aria-label="Chiudi immagine"
+          aria-label={t('box.close')}
         >
           ✕
         </button>
@@ -112,7 +114,7 @@ export function Lightbox() {
       >
         <img
           src={src}
-          alt="Immagine del libro"
+          alt={t('box.alt')}
           onClick={onImgClick}
           draggable={false}
           style={{
@@ -126,7 +128,7 @@ export function Lightbox() {
         />
       </div>
 
-      <p className="pb-1 text-center text-xs text-white/40">Doppio tap per zoom · trascina per spostarti</p>
+      <p className="pb-1 text-center text-xs text-white/40">{t('box.hint')}</p>
     </div>
   )
 }

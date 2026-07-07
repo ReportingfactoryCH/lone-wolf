@@ -1,6 +1,7 @@
 import type { Rendition } from 'epubjs'
 import { goToSection, type SectionIndex } from './sections'
 import { useStore } from '../store'
+import { translate } from '../i18n'
 
 // Singleton NON reattivo che espone il controllo del reader ai pannelli
 // (es. "vai alla sezione N") senza forzare re-render del Reader memoizzato.
@@ -174,16 +175,21 @@ function injectPageNav(doc: Document) {
     return b
   }
 
+  // Etichette nella lingua UI corrente (lette al momento dell'iniezione).
+  const lang = useStore.getState().lang
+
   // Riga 1: Precedente | Successiva
   const row1 = mkRow()
-  row1.appendChild(mkBtn('‹ Precedente', 'Pagina precedente', () => prevPage()))
-  row1.appendChild(mkBtn('Successiva ›', 'Pagina successiva', () => nextPage()))
+  row1.appendChild(mkBtn(translate(lang, 'pagenav.prev'), translate(lang, 'pagenav.prevAria'), () => prevPage()))
+  row1.appendChild(mkBtn(translate(lang, 'pagenav.next'), translate(lang, 'pagenav.nextAria'), () => nextPage()))
 
   // Riga 2: Indietro | Sezione (apre il pannello "vai alla sezione")
   const row2 = mkRow()
-  row2.appendChild(mkBtn('↩ Indietro', 'Torna indietro nella cronologia', () => goBack()))
+  row2.appendChild(mkBtn(translate(lang, 'pagenav.back'), translate(lang, 'pagenav.backAria'), () => goBack()))
   row2.appendChild(
-    mkBtn('🧭 Sezione', 'Vai alla sezione', () => useStore.getState().setPanel('goto')),
+    mkBtn(translate(lang, 'pagenav.section'), translate(lang, 'pagenav.sectionAria'), () =>
+      useStore.getState().setPanel('goto'),
+    ),
   )
 
   bar.appendChild(row1)

@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Sheet } from '../Sheet'
 import { Stepper, TextField } from '../ui'
 import { useStore } from '../../store'
+import { useT } from '../../i18n/useT'
+import type { TFunc } from '../../i18n'
 import type { CombatState } from '../../db'
 import { crtIsPopulated } from '../../data/crt'
 import {
@@ -61,6 +63,7 @@ export function Combat({ onClose }: { onClose: () => void }) {
 // --- Schermata di avvio -----------------------------------------------------
 
 function StartCombat({ onClose }: { onClose: () => void }) {
+  const t = useT()
   const chart = useStore((s) => s.playthrough?.actionChart ?? null)
   const setCombat = useStore((s) => s.setCombat)
   const addWarLog = useStore((s) => s.addWarLog)
@@ -76,21 +79,21 @@ function StartCombat({ onClose }: { onClose: () => void }) {
     const base = newCombat(chart, importFromChart)
     const state: CombatState = {
       ...base,
-      enemyName: enemyName.trim() || 'Nemico',
+      enemyName: enemyName.trim() || t('combat.enemyDefault'),
       enemyCombatSkill: enemyCS,
       enemyEndurance: enemyEN,
       lwCombatSkill: importFromChart && chart ? chart.combatSkill : lwCS,
       lwEndurance: importFromChart && chart ? chart.endurance.current : lwEN,
     }
     setCombat(state)
-    addWarLog({ type: 'combat', text: `Inizio combattimento contro ${state.enemyName}` })
+    addWarLog({ type: 'combat', text: t('combat.logStart', { name: state.enemyName }) })
   }
 
   return (
-    <Sheet title="Nuovo combattimento" icon="⚔️" onClose={onClose}>
+    <Sheet title={t('combat.newTitle')} icon="⚔️" onClose={onClose}>
       <div className="flex flex-col gap-5">
         <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]/60 p-3">
-          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">Dati di Lupo Solitario</h3>
+          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">{t('combat.lwData')}</h3>
           <label className="mb-3 flex items-center gap-3">
             <input
               type="checkbox"
@@ -98,28 +101,33 @@ function StartCombat({ onClose }: { onClose: () => void }) {
               checked={importFromChart}
               onChange={(e) => setImportFromChart(e.target.checked)}
             />
-            <span className="text-sm">Importa Endurance e Combat Skill dal registro</span>
+            <span className="text-sm">{t('combat.importFromChart')}</span>
           </label>
           {!importFromChart && (
             <div className="grid grid-cols-2 gap-3">
-              <Stepper label="Combat Skill" value={lwCS} onChange={setLwCS} />
-              <Stepper label="Endurance" value={lwEN} onChange={setLwEN} />
+              <Stepper label={t('chart.combatSkill')} value={lwCS} onChange={setLwCS} />
+              <Stepper label={t('chart.endurance')} value={lwEN} onChange={setLwEN} />
             </div>
           )}
           {importFromChart && chart && (
             <p className="text-sm text-[var(--color-ink)]/60">
-              CS {chart.combatSkill} · Endurance {chart.endurance.current} (dal registro)
+              {t('combat.fromChart', { cs: chart.combatSkill, en: chart.endurance.current })}
             </p>
           )}
         </section>
 
         <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]/60 p-3">
-          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">Dati del nemico</h3>
+          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">{t('combat.enemyData')}</h3>
           <div className="flex flex-col gap-3">
-            <TextField label="Nome" value={enemyName} onChange={setEnemyName} placeholder="es. Signore di Helghast" />
+            <TextField
+              label={t('combat.name')}
+              value={enemyName}
+              onChange={setEnemyName}
+              placeholder={t('combat.enemyNamePlaceholder')}
+            />
             <div className="grid grid-cols-2 gap-3">
-              <Stepper label="Combat Skill" value={enemyCS} onChange={setEnemyCS} />
-              <Stepper label="Endurance" value={enemyEN} onChange={setEnemyEN} />
+              <Stepper label={t('chart.combatSkill')} value={enemyCS} onChange={setEnemyCS} />
+              <Stepper label={t('chart.endurance')} value={enemyEN} onChange={setEnemyEN} />
             </div>
           </div>
         </section>
@@ -128,11 +136,9 @@ function StartCombat({ onClose }: { onClose: () => void }) {
           onClick={start}
           className="touch rounded-xl border border-[var(--color-gold-dim)] bg-[var(--color-panel-2)] px-6 py-3 text-lg font-semibold text-[var(--color-gold)] active:bg-[var(--color-line)]"
         >
-          Avvia combattimento
+          {t('combat.start')}
         </button>
-        <p className="text-center text-xs text-[var(--color-ink)]/50">
-          Tutti i valori restano modificabili a mano durante lo scontro.
-        </p>
+        <p className="text-center text-xs text-[var(--color-ink)]/50">{t('combat.allEditableNote')}</p>
       </div>
     </Sheet>
   )
@@ -153,6 +159,7 @@ function ActiveCombat({
   addWarLog: (e: { type: 'combat'; text: string }) => void
   syncToChart: () => void
 }) {
+  const t = useT()
   const ratio = combatRatio(combat.lwCombatSkill, combat.enemyCombatSkill, combat.lwBonus)
   const crtReady = crtIsPopulated()
 
@@ -184,7 +191,7 @@ function ActiveCombat({
       const entry = manualEntry(meta.target, meta.field, from, to)
       lastLogged.current[key] = to
       setCombat({ ...cur, history: [...cur.history, entry] })
-      addWarLog({ type: 'combat', text: describeEntry(entry) })
+      addWarLog({ type: 'combat', text: describeEntry(entry, t) })
     }, 1100)
   }
 
@@ -217,7 +224,7 @@ function ActiveCombat({
     lastLogged.current.lwEndurance = lwAfter
     lastLogged.current.enemyEndurance = enemyAfter
     setCombat({ ...cur, lwEndurance: lwAfter, enemyEndurance: enemyAfter, history: [...cur.history, entry] })
-    addWarLog({ type: 'combat', text: describeEntry(entry) })
+    addWarLog({ type: 'combat', text: describeEntry(entry, t) })
     setNum('')
     setManualLw(0)
     setManualEnemy(0)
@@ -229,7 +236,7 @@ function ActiveCombat({
     syncToChart()
     const entry = { kind: 'sync' as const, ts: Date.now() }
     setCombat({ ...cur, history: [...cur.history, entry] })
-    addWarLog({ type: 'combat', text: describeEntry(entry) })
+    addWarLog({ type: 'combat', text: describeEntry(entry, t) })
   }
 
   // --- fuga / fine ---
@@ -240,8 +247,8 @@ function ActiveCombat({
     if (!cur) return
     const lwAfter = applyLoss(cur.lwEndurance, evadeLoss)
     const entry = { kind: 'evade' as const, ts: Date.now(), lwLoss: evadeLoss, toSection: evadeSection || undefined }
-    addWarLog({ type: 'combat', text: describeEntry(entry) })
-    addWarLog({ type: 'combat', text: `Fine combattimento contro ${cur.enemyName} (fuga)` })
+    addWarLog({ type: 'combat', text: describeEntry(entry, t) })
+    addWarLog({ type: 'combat', text: t('combat.logEvadeEnd', { name: cur.enemyName }) })
     // Aggiorna l'Endurance corrente nello scontro e chiude lo scontro.
     setCombat({ ...cur, lwEndurance: lwAfter, open: false, history: [...cur.history, entry] })
     finish('fled')
@@ -251,7 +258,13 @@ function ActiveCombat({
     const cur = useStore.getState().playthrough?.activeCombat
     if (!cur) return
     if (outcome !== 'fled') {
-      addWarLog({ type: 'combat', text: `Fine combattimento contro ${cur.enemyName} (${outcome})` })
+      const outMap = {
+        won: t('clog.outcomeWon'),
+        fled: t('clog.outcomeFled'),
+        'lw-down': t('clog.outcomeLwDown'),
+        closed: t('clog.outcomeClosed'),
+      } as const
+      addWarLog({ type: 'combat', text: t('combat.logEnd', { name: cur.enemyName, outcome: outMap[outcome] }) })
     }
     setCombat(null) // chiude lo scontro; il war log conserva il riassunto
     // Chiude il pannello e torna al reader (pagina da cui si era aperto il
@@ -263,7 +276,7 @@ function ActiveCombat({
 
   return (
     <Sheet
-      title={`Combattimento — ${combat.enemyName}`}
+      title={t('combat.title', { name: combat.enemyName })}
       icon="⚔️"
       onClose={onClose}
       footer={
@@ -272,13 +285,13 @@ function ActiveCombat({
             className="touch flex-1 rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 text-sm active:bg-[var(--color-line)]"
             onClick={onClose}
           >
-            Esci (riprendi dopo)
+            {t('combat.exitResume')}
           </button>
           <button
             className="touch flex-1 rounded-lg border border-[var(--color-gold-dim)] bg-[var(--color-panel-2)] px-3 text-sm font-semibold text-[var(--color-gold)] active:bg-[var(--color-line)]"
             onClick={() => finish('won')}
           >
-            Termina scontro
+            {t('combat.finish')}
           </button>
         </div>
       }
@@ -287,14 +300,16 @@ function ActiveCombat({
         {/* Stato corrente */}
         <div className="grid grid-cols-2 gap-3">
           <Combatant
-            title="Lupo Solitario"
+            t={t}
+            title={t('combat.lwName')}
             en={combat.lwEndurance}
             cs={combat.lwCombatSkill}
             onEn={(v) => setField('lwEndurance', v)}
             onCs={(v) => setField('lwCombatSkill', v)}
           />
           <Combatant
-            title={combat.enemyName || 'Nemico'}
+            t={t}
+            title={combat.enemyName || t('combat.enemyDefault')}
             en={combat.enemyEndurance}
             cs={combat.enemyCombatSkill}
             onEn={(v) => setField('enemyEndurance', v)}
@@ -306,28 +321,28 @@ function ActiveCombat({
 
         {(combat.lwEndurance <= 0 || combat.enemyEndurance <= 0) && (
           <div className="rounded-lg border border-[var(--color-blood)] bg-[var(--color-blood)]/10 px-3 py-2 text-sm">
-            {combat.enemyEndurance <= 0 && '☠️ Nemico a 0 o meno — possibile vittoria. '}
-            {combat.lwEndurance <= 0 && '⚠️ LW a 0 o meno — situazione critica. '}
-            Decidi tu cosa farne (l’app non chiude nulla in automatico).
+            {combat.enemyEndurance <= 0 && t('combat.enemyDown')}
+            {combat.lwEndurance <= 0 && t('combat.lwDown')}
+            {t('combat.decide')}
           </div>
         )}
 
         {/* Combat Ratio + bonus */}
         <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]/60 p-3">
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="font-semibold text-[var(--color-gold)]">Combat Ratio</h3>
+            <h3 className="font-semibold text-[var(--color-gold)]">{t('combat.ratio')}</h3>
             <span className="text-2xl font-bold text-[var(--color-gold)]">{fmtRatio(ratio)}</span>
           </div>
-          <Stepper label="Bonus/malus temporaneo al CR" value={combat.lwBonus} onChange={setBonus} />
+          <Stepper label={t('combat.bonus')} value={combat.lwBonus} onChange={setBonus} />
         </section>
 
         {/* Round */}
         <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]/60 p-3">
-          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">Round</h3>
+          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">{t('combat.round')}</h3>
           <div className="mb-3 flex items-end gap-2">
             <div className="flex-1">
               <Stepper
-                label="Numero estratto (0–9)"
+                label={t('combat.drawnNumber')}
                 value={typeof num === 'number' ? num : 0}
                 onChange={(v) => setNum(Math.max(0, Math.min(9, v)))}
               />
@@ -336,25 +351,27 @@ function ActiveCombat({
               className="touch rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 text-sm active:bg-[var(--color-line)]"
               onClick={() => setNum(Math.floor(Math.random() * 10))}
             >
-              🎲 Estrai
+              🎲 {t('combat.drawBtn')}
             </button>
           </div>
 
           {!crtReady && (
             <p className="mb-2 rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 py-2 text-xs text-[var(--color-gold-dim)]">
-              CRT non compilata (src/data/crt.ts): inserisci i danni a mano.
+              {t('combat.crtMissing')}
             </p>
           )}
 
           {usingManual ? (
             <div className="grid grid-cols-2 gap-3">
-              <Stepper label="Perdita LW" value={manualLw} onChange={setManualLw} />
-              <Stepper label="Perdita nemico" value={manualEnemy} onChange={setManualEnemy} />
+              <Stepper label={t('combat.lwLoss')} value={manualLw} onChange={setManualLw} />
+              <Stepper label={t('combat.enemyLoss')} value={manualEnemy} onChange={setManualEnemy} />
             </div>
           ) : (
             <p className="text-sm text-[var(--color-ink)]/70">
-              Proposta CRT: LW {isFinite(proposal?.lwLoss ?? 0) ? `−${proposal?.lwLoss}` : 'MORTE'}, Nemico{' '}
-              {isFinite(proposal?.enemyLoss ?? 0) ? `−${proposal?.enemyLoss}` : 'MORTE'}
+              {t('combat.crtProposal', {
+                lw: isFinite(proposal?.lwLoss ?? 0) ? `−${proposal?.lwLoss}` : t('combat.death'),
+                enemy: isFinite(proposal?.enemyLoss ?? 0) ? `−${proposal?.enemyLoss}` : t('combat.death'),
+              })}
             </p>
           )}
 
@@ -362,7 +379,7 @@ function ActiveCombat({
             className="touch mt-3 w-full rounded-lg border border-[var(--color-gold-dim)] bg-[var(--color-panel-2)] px-4 py-2 font-semibold text-[var(--color-gold)] active:bg-[var(--color-line)]"
             onClick={applyRound}
           >
-            Applica round
+            {t('combat.applyRound')}
           </button>
         </section>
 
@@ -371,37 +388,35 @@ function ActiveCombat({
           className="touch w-full rounded-lg border border-[var(--color-gold)] bg-[var(--color-panel-2)] px-4 py-3 font-semibold text-[var(--color-gold)] active:bg-[var(--color-line)]"
           onClick={sync}
         >
-          ⬆︎ Aggiorna resistenza nel registro
+          {t('combat.sync')}
         </button>
 
         {/* Fuga */}
         <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]/60 p-3">
-          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">Fuggi / abbandona</h3>
+          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">{t('combat.evadeTitle')}</h3>
           <div className="grid grid-cols-2 gap-3">
-            <Stepper label="Perdita LW alla fuga" value={evadeLoss} onChange={setEvadeLoss} />
-            <TextField label="Vai alla sezione" value={evadeSection} onChange={setEvadeSection} placeholder="es. 217" />
+            <Stepper label={t('combat.evadeLoss')} value={evadeLoss} onChange={setEvadeLoss} />
+            <TextField label={t('combat.evadeSection')} value={evadeSection} onChange={setEvadeSection} placeholder="es. 217" />
           </div>
           <button
             className="touch mt-3 w-full rounded-lg border border-[var(--color-blood)] px-4 py-2 font-semibold text-[var(--color-ink)] active:bg-[var(--color-blood)]/20"
             onClick={evade}
           >
-            Fuggi (il nemico non subisce danni)
+            {t('combat.evadeBtn')}
           </button>
         </section>
 
         {/* Storico-diario */}
         <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]/60 p-3">
-          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">Storico (diario, sola lettura)</h3>
+          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">{t('combat.historyTitle')}</h3>
           <ul className="flex flex-col gap-1">
             {history.map((e, i) => (
               <li key={i} className="text-sm text-[var(--color-ink)]/80">
-                • {describeEntry(e)}
+                • {describeEntry(e, t)}
               </li>
             ))}
           </ul>
-          <p className="mt-2 text-xs text-[var(--color-ink)]/40">
-            Per “tornare indietro” correggi a mano i valori: la modifica verrà registrata qui.
-          </p>
+          <p className="mt-2 text-xs text-[var(--color-ink)]/40">{t('combat.historyNote')}</p>
         </section>
       </div>
     </Sheet>
@@ -409,6 +424,7 @@ function ActiveCombat({
 }
 
 function Combatant({
+  t,
   title,
   en,
   cs,
@@ -417,6 +433,7 @@ function Combatant({
   nameValue,
   onName,
 }: {
+  t: TFunc
   title: string
   en: number
   cs: number
@@ -437,8 +454,8 @@ function Combatant({
         <h3 className="mb-2 font-semibold text-[var(--color-gold)]">{title}</h3>
       )}
       <div className="flex flex-col gap-2">
-        <Stepper label="Endurance" value={en} onChange={onEn} />
-        <Stepper label="Combat Skill" value={cs} onChange={onCs} />
+        <Stepper label={t('chart.endurance')} value={en} onChange={onEn} />
+        <Stepper label={t('chart.combatSkill')} value={cs} onChange={onCs} />
       </div>
     </div>
   )

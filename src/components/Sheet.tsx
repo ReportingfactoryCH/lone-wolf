@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react'
+import { useT } from '../i18n/useT'
 
 // Sheet a tutto schermo (mobile-first). Entra dal basso, rispetta le safe-area,
 // si chiude con il pulsante grande in alto o con Esc. Non "imprigiona" l'utente:
@@ -16,6 +17,7 @@ export function Sheet({
   children: ReactNode
   footer?: ReactNode
 }) {
+  const t = useT()
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -35,7 +37,7 @@ export function Sheet({
           <button
             onClick={onClose}
             className="touch flex items-center justify-center rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 text-[var(--color-ink)] active:bg-[var(--color-line)]"
-            aria-label="Chiudi"
+            aria-label={t('common.close')}
           >
             ✕
           </button>

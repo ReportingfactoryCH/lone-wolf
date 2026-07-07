@@ -3,11 +3,14 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db, newPlaythrough, type BookRecord, type Playthrough } from '../db'
 import { useStore } from '../store'
 import type { PersistState } from '../hooks/usePersistence'
+import { useT } from '../i18n/useT'
 
 // Schermata iniziale: libreria dei libri salvati in IndexedDB + caricamento EPUB.
 export function Library({ persist }: { persist: PersistState }) {
+  const t = useT()
   const books = useLiveQuery(() => db.books.orderBy('addedAt').reverse().toArray(), [], [] as BookRecord[])
   const openReader = useStore((s) => s.openReader)
+  const setPanel = useStore((s) => s.setPanel)
   const fileRef = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState(false)
 
@@ -31,7 +34,7 @@ export function Library({ persist }: { persist: PersistState }) {
       .then((a) => a[0])
     if (!pt) {
       const existing = await db.playthroughs.where('bookId').equals(bookId).count()
-      const id = await db.playthroughs.add(newPlaythrough(bookId, `Partita ${existing + 1}`))
+      const id = await db.playthroughs.add(newPlaythrough(bookId, t('lib.playthroughName', { n: existing + 1 })))
       pt = await db.playthroughs.get(id)
     }
     if (pt?.id != null) await openReader(bookId, pt.id)
@@ -40,12 +43,10 @@ export function Library({ persist }: { persist: PersistState }) {
   // Nuova partita: azione DISTRUTTIVA → conferma esplicita. Se si procede,
   // i playthrough esistenti di QUESTO libro vengono cancellati e se ne crea uno pulito.
   const startNewGame = async (bookId: number) => {
-    const ok = window.confirm(
-      'Iniziare una nuova partita?\n\nI salvataggi precedenti di questo libro verranno cancellati. Se vuoi conservarli, esportali prima dal Registro.',
-    )
+    const ok = window.confirm(t('lib.newGameConfirm'))
     if (!ok) return
     await db.playthroughs.where('bookId').equals(bookId).delete()
-    const id = await db.playthroughs.add(newPlaythrough(bookId, 'Partita 1'))
+    const id = await db.playthroughs.add(newPlaythrough(bookId, t('lib.playthroughName', { n: 1 })))
     await openReader(bookId, id)
   }
 
@@ -57,19 +58,24 @@ export function Library({ persist }: { persist: PersistState }) {
   }
 
   const persistNote =
-    persist === 'denied'
-      ? 'Storage non persistente: iOS potrebbe cancellare i dati. Esporta i salvataggi dal Registro.'
-      : persist === 'granted'
-        ? 'Storage persistente concesso.'
-        : null
+    persist === 'denied' ? t('lib.persistDenied') : persist === 'granted' ? t('lib.persistGranted') : null
 
   return (
     <div className="min-h-app flex flex-col pt-safe pb-safe">
       <header className="px-4 pt-4">
-        <h1 className="text-2xl font-bold text-[var(--color-gold)]">Lupo Solitario</h1>
+        <div className="flex items-start justify-between gap-2">
+          <h1 className="text-2xl font-bold text-[var(--color-gold)]">Lupo Solitario</h1>
+          <button
+            className="touch flex items-center justify-center rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 active:bg-[var(--color-line)]"
+            onClick={() => setPanel('settings')}
+            aria-label={t('lib.settings')}
+          >
+            ⚙️
+          </button>
+        </div>
         {/* Marcatore di build: cambia a ogni deploy → conferma di non essere in cache. */}
         <p className="font-mono text-[10px] text-[var(--color-gold-dim)]">build {__BUILD_ID__}</p>
-        <p className="text-sm text-[var(--color-ink)]/60">Reader offline per gamebook</p>
+        <p className="text-sm text-[var(--color-ink)]/60">{t('lib.subtitle')}</p>
         {persistNote && <p className="mt-1 text-xs text-[var(--color-gold-dim)]">{persistNote}</p>}
       </header>
 
@@ -79,7 +85,7 @@ export function Library({ persist }: { persist: PersistState }) {
           onClick={() => fileRef.current?.click()}
           disabled={busy}
         >
-          {busy ? 'Caricamento…' : '＋ Carica EPUB'}
+          {busy ? t('lib.loading') : `＋ ${t('lib.load')}`}
         </button>
         <input
           ref={fileRef}
@@ -96,9 +102,7 @@ export function Library({ persist }: { persist: PersistState }) {
 
       <div className="scroll-area flex-1 px-4">
         {books.length === 0 && (
-          <p className="py-12 text-center text-sm text-[var(--color-ink)]/50">
-            Nessun libro. Carica un EPUB (es. i gamebook di Project Aon) per iniziare.
-          </p>
+          <p className="py-12 text-center text-sm text-[var(--color-ink)]/50">{t('lib.empty')}</p>
         )}
         <ul className="flex flex-col gap-3">
           {books.map((b) => (
@@ -122,18 +126,18 @@ export function Library({ persist }: { persist: PersistState }) {
                   className="touch flex-1 rounded-lg border border-[var(--color-gold-dim)] bg-[var(--color-panel-2)] px-3 font-semibold text-[var(--color-gold)] active:bg-[var(--color-line)]"
                   onClick={() => b.id != null && open(b.id)}
                 >
-                  Apri
+                  {t('lib.open')}
                 </button>
                 <button
                   className="touch rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 text-sm active:bg-[var(--color-line)]"
                   onClick={() => b.id != null && startNewGame(b.id)}
                 >
-                  Nuova partita
+                  {t('lib.newGame')}
                 </button>
                 <button
                   className="touch rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 active:bg-[var(--color-line)]"
                   onClick={() => b.id != null && removeBook(b.id)}
-                  aria-label="Rimuovi libro"
+                  aria-label={t('lib.removeBook')}
                 >
                   🗑
                 </button>

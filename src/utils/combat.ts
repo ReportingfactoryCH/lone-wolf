@@ -1,5 +1,6 @@
 import { type CombatState, type CombatLogEntry, type ActionChart } from '../db'
 import { lookupCrt, type CrtResult } from '../data/crt'
+import type { TFunc, TKey } from '../i18n'
 
 // ---------------------------------------------------------------------------
 // Helper di combattimento — PURO e SCAVALCABILE.
@@ -97,35 +98,45 @@ export function manualEntry(
 }
 
 /** Descrizione testuale leggibile di una riga di storico (per UI e war log). */
-export function describeEntry(e: CombatLogEntry): string {
+export function describeEntry(e: CombatLogEntry, t: TFunc): string {
+  const death = t('combat.death')
   switch (e.kind) {
     case 'start':
-      return e.importedFromChart
-        ? 'Inizio combattimento (valori importati dal registro)'
-        : 'Inizio combattimento (valori inseriti a mano)'
+      return e.importedFromChart ? t('clog.startImported') : t('clog.startManual')
     case 'round': {
-      const num = e.randomNumber === null ? 'manuale' : `n.${e.randomNumber}`
-      const lwLoss = isFinite(e.lwLoss) ? `−${e.lwLoss}` : 'MORTE'
-      const enLoss = isFinite(e.enemyLoss) ? `−${e.enemyLoss}` : 'MORTE'
-      return `Round — ${num}, CR ${fmtRatio(e.combatRatio)} → LW ${lwLoss} (${e.lwAfter}), Nemico ${enLoss} (${e.enemyAfter})`
+      const num = e.randomNumber === null ? t('clog.roundManual') : t('clog.roundNum', { n: e.randomNumber })
+      const lwLoss = isFinite(e.lwLoss) ? `−${e.lwLoss}` : death
+      const enLoss = isFinite(e.enemyLoss) ? `−${e.enemyLoss}` : death
+      return t('clog.round', {
+        num,
+        cr: fmtRatio(e.combatRatio),
+        lwLoss,
+        lwAfter: e.lwAfter,
+        enLoss,
+        enAfter: e.enemyAfter,
+      })
     }
     case 'manual': {
-      const who = e.target === 'lw' ? 'LW' : 'Nemico'
-      const f = e.field === 'endurance' ? 'Endurance' : 'Combat Skill'
-      return `Modifica manuale — ${who} ${f} ${e.from} → ${e.to}${e.note ? ` (${e.note})` : ''}`
+      const who = t(e.target === 'lw' ? 'clog.manualLw' : 'clog.manualEnemy')
+      const f = t(e.field === 'endurance' ? 'clog.manualEndurance' : 'clog.manualCs')
+      const vars = { who, field: f, from: e.from, to: e.to, note: e.note ?? '' }
+      return t(e.note ? 'clog.manualNote' : 'clog.manual', vars)
     }
     case 'evade':
-      return `Fuga — LW −${e.lwLoss}${e.toSection ? `, vai alla sez. ${e.toSection}` : ''}`
+      return e.toSection
+        ? t('clog.evadeSection', { loss: e.lwLoss, section: e.toSection })
+        : t('clog.evade', { loss: e.lwLoss })
     case 'sync':
-      return 'Resistenza aggiornata nel registro'
+      return t('clog.sync')
     case 'end': {
-      const map: Record<string, string> = {
-        won: 'vittoria',
-        fled: 'fuga',
-        'lw-down': 'LW a terra',
-        closed: 'chiuso',
+      const map: Record<string, TKey> = {
+        won: 'clog.outcomeWon',
+        fled: 'clog.outcomeFled',
+        'lw-down': 'clog.outcomeLwDown',
+        closed: 'clog.outcomeClosed',
       }
-      return `Fine combattimento (${map[e.outcome] ?? e.outcome})`
+      const key = map[e.outcome]
+      return t('clog.end', { outcome: key ? t(key) : e.outcome })
     }
   }
 }

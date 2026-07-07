@@ -1,6 +1,8 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { EpubView } from 'react-reader'
 import type { Rendition, Book } from 'epubjs'
+import { useStore } from '../store'
+import { translate } from '../i18n'
 
 // ---------------------------------------------------------------------------
 // Reader: wrapper SOTTILE e MEMOIZZATO attorno a EpubView (NON ReactReader).
@@ -96,7 +98,7 @@ function ReaderImpl({ url, initialLocation, darkMode, fontSize, onLocationChange
         }}
         loadingView={
           <div className="flex h-full items-center justify-center text-[var(--color-gold-dim)]">
-            Caricamento del libro…
+            {translate(useStore.getState().lang, 'reader.bookLoading')}
           </div>
         }
       />

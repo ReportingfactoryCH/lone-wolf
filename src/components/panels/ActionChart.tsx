@@ -1,11 +1,13 @@
 import { Sheet } from '../Sheet'
 import { EditableList, Stepper } from '../ui'
 import { useStore } from '../../store'
+import { useT } from '../../i18n/useT'
 import type { ActionChart as Chart } from '../../db'
 
 // Action Chart: TUTTO sempre modificabile a mano (principio "l'utente è l'arbitro").
 // I limiti classici sono mostrati come riferimento/avviso, mai come blocco.
 export function ActionChart({ onClose }: { onClose: () => void }) {
+  const t = useT()
   const chart = useStore((s) => s.playthrough?.actionChart)
   const setChart = useStore((s) => s.setActionChart)
   if (!chart) return null
@@ -19,12 +21,12 @@ export function ActionChart({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <Sheet title="Action Chart" icon="📋" onClose={onClose}>
+    <Sheet title={t('chart.title')} icon="📋" onClose={onClose}>
       <div className="flex flex-col gap-5">
         {/* Combat Skill — MAI read-only definitivo. */}
         <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]/60 p-3">
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="font-semibold text-[var(--color-gold)]">Combat Skill</h3>
+            <h3 className="font-semibold text-[var(--color-gold)]">{t('chart.combatSkill')}</h3>
             <button
               className="touch rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 text-sm active:bg-[var(--color-line)]"
               onClick={() => rollInitial('cs')}
@@ -32,13 +34,13 @@ export function ActionChart({ onClose }: { onClose: () => void }) {
               🎲 10 + (0–9)
             </button>
           </div>
-          <Stepper value={chart.combatSkill} onChange={(v) => patch({ combatSkill: v })} hint="iniziale 10–19" />
+          <Stepper value={chart.combatSkill} onChange={(v) => patch({ combatSkill: v })} hint={t('chart.csHint')} />
         </section>
 
         {/* Endurance — corrente e max, può salire o scendere a mano. */}
         <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]/60 p-3">
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="font-semibold text-[var(--color-gold)]">Endurance (Resistenza)</h3>
+            <h3 className="font-semibold text-[var(--color-gold)]">{t('chart.endurance')}</h3>
             <button
               className="touch rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 text-sm active:bg-[var(--color-line)]"
               onClick={() => rollInitial('en')}
@@ -48,13 +50,13 @@ export function ActionChart({ onClose }: { onClose: () => void }) {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <Stepper
-              label="Corrente"
+              label={t('chart.enduranceCurrent')}
               value={chart.endurance.current}
               onChange={(v) => patch({ endurance: { ...chart.endurance, current: v } })}
-              warn={chart.endurance.current <= 0 ? '≤ 0 — situazione critica (decidi tu)' : undefined}
+              warn={chart.endurance.current <= 0 ? t('chart.enduranceCritical') : undefined}
             />
             <Stepper
-              label="Massima"
+              label={t('chart.enduranceMax')}
               value={chart.endurance.max}
               onChange={(v) => patch({ endurance: { ...chart.endurance, max: v } })}
             />
@@ -64,26 +66,24 @@ export function ActionChart({ onClose }: { onClose: () => void }) {
         {/* Kai Disciplines — lista liberamente editabile: variano e aumentano
             nel corso dei libri, quindi si gestiscono come lo zaino. */}
         <EditableList
-          title="Discipline Kai"
+          title={t('chart.kai')}
           items={chart.kaiDisciplines}
           onChange={(kaiDisciplines) => patch({ kaiDisciplines })}
-          addPlaceholder="es. Mimetismo, Sesto Senso…"
+          addPlaceholder={t('chart.kaiPlaceholder')}
         />
 
         {/* Belt Pouch — oro. */}
         <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]/60 p-3">
-          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">Corone d’oro (Belt Pouch)</h3>
+          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">{t('chart.gold')}</h3>
           <Stepper
             value={chart.goldCrowns}
             onChange={(v) => patch({ goldCrowns: v })}
-            hint="riferimento max 50"
-            warn={chart.goldCrowns > 50 ? 'oltre il limite classico di 50 (consentito)' : undefined}
+            hint={t('chart.goldHint')}
+            warn={chart.goldCrowns > 50 ? t('chart.goldWarn') : undefined}
           />
         </section>
 
-        <p className="text-center text-xs text-[var(--color-ink)]/50">
-          Armi, zaino e oggetti speciali si gestiscono nel pannello 🎒 Inventario.
-        </p>
+        <p className="text-center text-xs text-[var(--color-ink)]/50">{t('chart.itemsNote')}</p>
       </div>
     </Sheet>
   )
