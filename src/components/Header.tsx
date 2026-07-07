@@ -84,7 +84,9 @@ export function BottomBar({ navRef }: { navRef?: Ref<HTMLElement> }) {
     <nav
       ref={navRef}
       className="absolute inset-x-0 bottom-0 z-10 border-t border-[var(--color-line)] bg-[var(--color-panel-2)] shadow-[0_-6px_16px_rgba(0,0,0,0.45)]"
-      style={{ paddingBottom: 'max(calc(env(safe-area-inset-bottom) - 10px), 6px)' }}
+      // DIAGNOSTICO: bordo rosso = dove atterra `bottom:0`. Se sotto resta schermo
+      // fisico, la web view non arriva al fondo in standalone. Da rimuovere.
+      style={{ paddingBottom: 'max(calc(env(safe-area-inset-bottom) - 10px), 6px)', borderBottom: '4px solid #ff0033' }}
     >
       <div className="grid grid-cols-5 gap-1 px-1 py-0.5">
         {PANELS.map((p) => (
