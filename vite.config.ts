@@ -3,10 +3,18 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// Marcatore di build (UTC, "YYYY-MM-DD HH:mm"): calcolato a ogni build e
+// iniettato via `define` come costante globale __BUILD_ID__. Mostrato nella
+// Libreria per verificare a colpo d'occhio quale versione è servita (no cache).
+const buildId = new Date().toISOString().slice(0, 16).replace('T', ' ')
+
 // Tailwind v4 via plugin ufficiale (@tailwindcss/vite) — NIENTE config PostCSS v3.
 // vite-plugin-pwa con registerType autoUpdate: precache di tutta l'app shell.
 // Nessuna risorsa da CDN: tutto è bundlato per garantire il funzionamento offline.
 export default defineConfig({
+  define: {
+    __BUILD_ID__: JSON.stringify(buildId),
+  },
   // Porta di default per dev (`npm run dev`) e preview (`npm run preview`).
   // host: true → bind su 0.0.0.0 (tutte le interfacce) così l'app è raggiungibile
   // dallo smartphone sulla stessa rete (es. http://192.168.x.x:4200).

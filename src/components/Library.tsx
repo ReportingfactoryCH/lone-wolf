@@ -67,6 +67,8 @@ export function Library({ persist }: { persist: PersistState }) {
     <div className="min-h-app flex flex-col pt-safe pb-safe">
       <header className="px-4 pt-4">
         <h1 className="text-2xl font-bold text-[var(--color-gold)]">Lupo Solitario</h1>
+        {/* Marcatore di build: cambia a ogni deploy → conferma di non essere in cache. */}
+        <p className="font-mono text-[10px] text-[var(--color-gold-dim)]">build {__BUILD_ID__}</p>
         <p className="text-sm text-[var(--color-ink)]/60">Reader offline per gamebook</p>
         {persistNote && <p className="mt-1 text-xs text-[var(--color-gold-dim)]">{persistNote}</p>}
       </header>
