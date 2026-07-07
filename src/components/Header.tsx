@@ -76,10 +76,11 @@ export function BottomBar() {
   const openPanel = useStore((s) => s.openPanel)
   const setPanel = useStore((s) => s.setPanel)
   return (
-    <nav
-      className="pb-safe shrink-0 border-t border-[var(--color-line)] bg-[var(--color-panel)]"
-      style={{ outline: '3px solid yellow', outlineOffset: '-3px' }}
-    >
+    // Sfondo più chiaro (panel-2) + bordo e ombra verso l'alto: così la barra si
+    // legge come una barra piena attaccata al fondo. Fondamentale su iPhone, dove
+    // `pb-safe` aggiunge la clearance dell'home-indicator: senza questo contrasto
+    // quello spazio sembrava pagina vuota e la toolbar pareva "staccata".
+    <nav className="pb-safe shrink-0 border-t border-[var(--color-line)] bg-[var(--color-panel-2)] shadow-[0_-6px_16px_rgba(0,0,0,0.45)]">
       <div className="grid grid-cols-5 gap-1 px-1 py-1">
         {PANELS.map((p) => (
           <button

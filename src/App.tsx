@@ -62,17 +62,13 @@ export default function App() {
 
   return (
     // App shell a `height:100%` (via la catena html/body/#root, tutti a 100%).
-    // NON `100dvh` né `fixed inset-0`: in standalone su iOS entrambi si fermano al
-    // viewport "sicuro" e lasciano scoperto il <body> nella zona home-indicator
-    // (striscia sotto il footer). Il 100% invece copre fino al bordo fisico, così
-    // il footer tocca il fondo e il suo `pb-safe` alza le icone sopra l'indicatore.
-    <div className="h-full flex flex-col" style={{ outline: '3px solid red', outlineOffset: '-3px' }}>
+    // Colonna flex: header, area di lettura (flex-1, min-h-0 per non farla sforare),
+    // toolbar in fondo. `min-h-0` è il fix canonico che evita che l'iframe alto di
+    // epub.js impedisca a `main` di restringersi.
+    <div className="h-full flex flex-col">
       <TopBar persist={persist} />
 
-      <main
-        className="relative flex-1 min-h-0 overflow-hidden"
-        style={{ outline: '3px solid cyan', outlineOffset: '-3px' }}
-      >
+      <main className="relative flex-1 min-h-0 overflow-hidden">
         {loading && (
           <div className="flex h-full items-center justify-center text-[var(--color-gold-dim)]">Caricamento…</div>
         )}
