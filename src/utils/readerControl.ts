@@ -128,10 +128,12 @@ function injectPageNav(doc: Document) {
       'display:flex',
       'flex-direction:column',
       'gap:8px',
-      // Margine inferiore ampio: la barra è l'ultimo elemento del testo e, scrollando
-      // in fondo, finirebbe a ridosso della toolbar dell'app → spazio per non premerla.
-      'margin:32px 0 48px',
-      'padding-top:16px',
+      'margin:32px 0 0',
+      // Spazio dal fondo via PADDING (non margin): il margin-bottom dell'ultimo
+      // elemento non viene incluso nell'altezza del contenuto da epub.js e verrebbe
+      // tagliato → la barra resterebbe a ridosso della toolbar. Il padding invece è
+      // sempre incluso, quindi lo spazio si vede e non si rischia di premere la toolbar.
+      'padding:16px 0 56px',
       'border-top:1px solid currentColor',
       'opacity:0.95',
       'font-family:system-ui,-apple-system,sans-serif',
