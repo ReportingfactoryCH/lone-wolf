@@ -1,4 +1,3 @@
-import type { Ref } from 'react'
 import { useStore, type PanelId } from '../store'
 import type { PersistState } from '../hooks/usePersistence'
 import { goBack } from '../utils/readerControl'
@@ -73,20 +72,17 @@ export function TopBar({ persist }: { persist: PersistState }) {
   )
 }
 
-export function BottomBar({ navRef }: { navRef?: Ref<HTMLElement> }) {
+export function BottomBar() {
   const openPanel = useStore((s) => s.openPanel)
   const setPanel = useStore((s) => s.setPanel)
   return (
-    // Toolbar INCOLLATA al fondo con `absolute bottom-0` (dentro la shell relative,
-    // che arriva al bordo fisico). Sfondo panel-2 + bordo/ombra = barra piena e
-    // distinta. La clearance dell'home-indicator è ridotta (env - 10px) per non
-    // farla troppo alta, mantenendo le icone sopra l'indicatore.
+    // Toolbar in fondo alla colonna flex. Con `.app-shell` alta quanto lo schermo
+    // fisico, tocca il bordo inferiore vero. Sfondo panel-2 + bordo/ombra = barra
+    // piena e distinta; clearance home-indicator ridotta (env - 10px) per non
+    // renderla troppo alta, tenendo le icone sopra l'indicatore.
     <nav
-      ref={navRef}
-      className="absolute inset-x-0 bottom-0 z-10 border-t border-[var(--color-line)] bg-[var(--color-panel-2)] shadow-[0_-6px_16px_rgba(0,0,0,0.45)]"
-      // DIAGNOSTICO: bordo rosso = dove atterra `bottom:0`. Se sotto resta schermo
-      // fisico, la web view non arriva al fondo in standalone. Da rimuovere.
-      style={{ paddingBottom: 'max(calc(env(safe-area-inset-bottom) - 10px), 6px)', borderBottom: '4px solid #ff0033' }}
+      className="shrink-0 border-t border-[var(--color-line)] bg-[var(--color-panel-2)] shadow-[0_-6px_16px_rgba(0,0,0,0.45)]"
+      style={{ paddingBottom: 'max(calc(env(safe-area-inset-bottom) - 10px), 6px)' }}
     >
       <div className="grid grid-cols-5 gap-1 px-1 py-0.5">
         {PANELS.map((p) => (

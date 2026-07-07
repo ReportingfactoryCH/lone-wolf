@@ -45,6 +45,21 @@ input, textarea, select, button {
   height: 100vh; /* fallback browser vecchi */
   height: 100dvh;
 }
+
+/* Shell dell'app (reader): deve coprire lo SCHERMO FISICO pieno.
+   Nel browser `100dvh` va bene. In standalone su iOS però `dvh`/`svh` valgono
+   meno del fisico (misurato: 797 vs 844) perché la status bar translucida lascia
+   una fascia morta in fondo → la toolbar sembrava staccata. `100lvh` copre il
+   fisico pieno (misurato: 844), quindi in standalone usiamo quello. */
+.app-shell {
+  height: 100vh; /* fallback */
+  height: 100dvh;
+}
+@media (display-mode: standalone) {
+  .app-shell {
+    height: 100lvh;
+  }
+}
 .min-h-app {
   min-height: 100vh;
   min-height: 100dvh;
