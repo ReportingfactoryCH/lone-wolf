@@ -61,7 +61,11 @@ export default function App() {
   }
 
   return (
-    <div className="h-app flex flex-col">
+    // App shell ancorata con `fixed inset-0` (non `height:100dvh` in flusso):
+    // in standalone su iOS il 100dvh si risolve contro un viewport che esclude
+    // l'home-indicator, lasciando una striscia sotto il footer. Con fixed inset-0
+    // la shell riempie il viewport visuale reale e il footer tocca il fondo.
+    <div className="fixed inset-0 flex flex-col">
       <TopBar persist={persist} />
 
       <main className="relative flex-1 overflow-hidden">
