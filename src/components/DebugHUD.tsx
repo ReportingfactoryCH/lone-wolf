@@ -6,6 +6,16 @@ export function DebugHUD() {
   const [info, setInfo] = useState('…')
 
   useEffect(() => {
+    // Sonda: misura quanto valgono in px le varie unità di viewport, per capire
+    // quale copre lo schermo fisico pieno (844) invece del viewport ridotto (797).
+    const probe = (unit: string) => {
+      const el = document.createElement('div')
+      el.style.cssText = `position:fixed;top:0;left:0;width:0;height:100${unit};pointer-events:none;visibility:hidden;`
+      document.body.appendChild(el)
+      const h = el.offsetHeight
+      el.remove()
+      return h
+    }
     const measure = () => {
       const nav = document.querySelector('nav')
       const navB = nav ? Math.round(nav.getBoundingClientRect().bottom) : -1
@@ -14,11 +24,9 @@ export function DebugHUD() {
         [
           `build ${__BUILD_ID__}`,
           window.matchMedia('(display-mode: standalone)').matches ? 'STANDALONE' : 'browser',
-          `scrH ${screen.height}`,
-          `innerH ${window.innerHeight}`,
-          `vvH ${vv ? Math.round(vv.height) : '-'} offTop ${vv ? Math.round(vv.offsetTop) : '-'}`,
-          `navBottom ${navB}`,
-          `gap(inner-nav) ${window.innerHeight - navB}`,
+          `scrH ${screen.height} innerH ${window.innerHeight}`,
+          `navBottom ${navB} gap ${window.innerHeight - navB}`,
+          `vh ${probe('vh')} lvh ${probe('lvh')} svh ${probe('svh')} dvh ${probe('dvh')}`,
         ].join(' | '),
       )
     }
