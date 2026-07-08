@@ -1,5 +1,4 @@
 import { useStore, type PanelId } from '../store'
-import type { PersistState } from '../hooks/usePersistence'
 import { goBack } from '../utils/readerControl'
 import { useT } from '../i18n/useT'
 import type { TKey } from '../i18n'
@@ -15,15 +14,12 @@ const PANELS: { id: Exclude<PanelId, null>; icon: string; label: TKey }[] = [
   { id: 'combat', icon: '⚔️', label: 'nav.combat' },
 ]
 
-export function TopBar({ persist }: { persist: PersistState }) {
+export function TopBar() {
   const t = useT()
   const goLibrary = useStore((s) => s.goLibrary)
   const setPanel = useStore((s) => s.setPanel)
   const fontSize = useStore((s) => s.fontSize)
   const setFontSize = useStore((s) => s.setFontSize)
-
-  const persistDot =
-    persist === 'granted' ? '🟢' : persist === 'denied' ? '🟡' : persist === 'unsupported' ? '⚪️' : '⏳'
 
   return (
     <header className="pt-safe shrink-0 border-b border-[var(--color-line)] bg-[var(--color-panel)]">
@@ -43,9 +39,6 @@ export function TopBar({ persist }: { persist: PersistState }) {
           ↩ {t('top.back')}
         </button>
         <span className="flex-1" />
-        <span title={`storage: ${persist}`} className="text-xs">
-          {persistDot}
-        </span>
         <div className="flex items-center overflow-hidden rounded-lg border border-[var(--color-line)]">
           <button
             className="touch px-3 text-sm active:bg-[var(--color-line)]"

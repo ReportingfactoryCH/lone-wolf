@@ -37,3 +37,17 @@ createRoot(document.getElementById('root')!).render(
     <OrientationGate />
   </StrictMode>,
 )
+
+// Rimuove lo splash inline (index.html) una volta montata l'app. Un minimo di
+// permanenza (~450ms) evita un lampo troppo brusco; poi dissolve e rimuove il nodo.
+{
+  const splash = document.getElementById('splash')
+  if (splash) {
+    setTimeout(() => {
+      splash.classList.add('splash--hide')
+      splash.addEventListener('transitionend', () => splash.remove(), { once: true })
+      // Fallback se transitionend non scatta (es. reduced-motion / interruzioni).
+      setTimeout(() => splash.remove(), 600)
+    }, 450)
+  }
+}

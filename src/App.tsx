@@ -66,7 +66,7 @@ export default function App() {
       <>
         <Library persist={persist} />
         {/* Impostazioni raggiungibili anche dalla Libreria */}
-        {openPanel === 'settings' && <Settings onClose={() => setPanel(null)} />}
+        {openPanel === 'settings' && <Settings onClose={() => setPanel(null)} persist={persist} />}
       </>
     )
   }
@@ -77,7 +77,7 @@ export default function App() {
     // in fondo): lì usiamo `100lvh`. Colonna flex: header, lettura (flex-1 + min-h-0),
     // toolbar in fondo — che così tocca il bordo fisico.
     <div className="app-shell flex flex-col">
-      <TopBar persist={persist} />
+      <TopBar />
 
       <main className="relative flex-1 min-h-0 overflow-hidden">
         {loading && (
@@ -108,7 +108,7 @@ export default function App() {
       {openPanel === 'warlog' && <WarLog onClose={() => setPanel(null)} />}
       {openPanel === 'combat' && <Combat onClose={() => setPanel(null)} />}
       {openPanel === 'goto' && <GoToSection onClose={() => setPanel(null)} />}
-      {openPanel === 'settings' && <Settings onClose={() => setPanel(null)} />}
+      {openPanel === 'settings' && <Settings onClose={() => setPanel(null)} persist={persist} />}
 
       {/* Lightbox immagini (mappe ecc.): si auto-nasconde se nessuna immagine aperta. */}
       <Lightbox />

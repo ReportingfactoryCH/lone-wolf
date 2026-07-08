@@ -65,6 +65,20 @@ export const en = {
   'settings.importMissing':
     'No book found for: {titles}. Load these EPUBs into the library and the matching saves will be restored automatically.',
   'settings.importFailed': 'Import failed: {err}',
+  'settings.storage': 'Data storage',
+  'settings.storageIntro':
+    'On launch the app asks the browser to keep your books and game saves even when device space runs low. Current status:',
+  'settings.storageGranted': 'Persistent',
+  'settings.storageDenied': 'Not persistent',
+  'settings.storageUnsupported': 'Not supported',
+  'settings.storageUnknown': 'Checking…',
+  'settings.storageHintGranted':
+    'The browser has promised to keep your data (books and saves) and should not evict it. This is the ideal state.',
+  'settings.storageHintDenied':
+    'Your data is kept on a best-effort basis: under memory pressure iOS may delete it. Use “Export all saves” above as a safety net.',
+  'settings.storageHintUnsupported':
+    'This browser does not expose the persistence API. Data usually stays, but export your saves regularly to be safe.',
+  'settings.storageHintUnknown': 'Asking the browser…',
 
   // Number generator
   'num.title': 'Generate number',

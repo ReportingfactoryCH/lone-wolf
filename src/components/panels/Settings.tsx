@@ -2,10 +2,21 @@ import { useRef, useState } from 'react'
 import { Sheet } from '../Sheet'
 import { useStore } from '../../store'
 import { useT } from '../../i18n/useT'
+import type { TKey } from '../../i18n'
+import type { PersistState } from '../../hooks/usePersistence'
 import { exportAllPlaythroughs, importAllPlaythroughs } from '../../utils/saveExport'
 
-// Impostazioni: lingua UI + tema + backup salvataggi. Raggiungibile da Libreria e da Reader.
-export function Settings({ onClose }: { onClose: () => void }) {
+// Mappa lo stato di persistenza → pallino + chiavi i18n (etichetta + spiegazione).
+const STORAGE_INFO: Record<PersistState, { dot: string; label: TKey; hint: TKey }> = {
+  granted: { dot: '🟢', label: 'settings.storageGranted', hint: 'settings.storageHintGranted' },
+  denied: { dot: '🟡', label: 'settings.storageDenied', hint: 'settings.storageHintDenied' },
+  unsupported: { dot: '⚪️', label: 'settings.storageUnsupported', hint: 'settings.storageHintUnsupported' },
+  unknown: { dot: '⏳', label: 'settings.storageUnknown', hint: 'settings.storageHintUnknown' },
+}
+
+// Impostazioni: lingua UI + tema + backup salvataggi + stato archiviazione.
+// Raggiungibile da Libreria e da Reader.
+export function Settings({ onClose, persist }: { onClose: () => void; persist: PersistState }) {
   const t = useT()
   const lang = useStore((s) => s.lang)
   const setLang = useStore((s) => s.setLang)
@@ -93,6 +104,19 @@ export function Settings({ onClose }: { onClose: () => void }) {
             />
           </div>
           {msg && <p className="mt-3 text-xs text-[var(--color-gold-dim)]">{msg}</p>}
+        </section>
+
+        {/* Archiviazione: stato della persistenza storage (spostato qui dall'header). */}
+        <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]/60 p-3">
+          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">{t('settings.storage')}</h3>
+          <p className="mb-2 text-xs text-[var(--color-ink)]/60">{t('settings.storageIntro')}</p>
+          <div className="mb-2 flex items-center gap-2">
+            <span aria-hidden className="text-base">
+              {STORAGE_INFO[persist].dot}
+            </span>
+            <span className="font-semibold text-[var(--color-ink)]">{t(STORAGE_INFO[persist].label)}</span>
+          </div>
+          <p className="text-xs text-[var(--color-ink)]/60">{t(STORAGE_INFO[persist].hint)}</p>
         </section>
       </div>
     </Sheet>

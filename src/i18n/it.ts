@@ -66,6 +66,20 @@ export const it: Record<keyof typeof en, string> = {
   'settings.importMissing':
     'Nessun libro trovato per: {titles}. Carica questi EPUB nella libreria e i salvataggi corrispondenti verranno ripristinati automaticamente.',
   'settings.importFailed': 'Import fallito: {err}',
+  'settings.storage': 'Archiviazione dati',
+  'settings.storageIntro':
+    'All’avvio l’app chiede al browser di conservare libri e salvataggi anche quando lo spazio sul dispositivo scarseggia. Stato attuale:',
+  'settings.storageGranted': 'Persistente',
+  'settings.storageDenied': 'Non persistente',
+  'settings.storageUnsupported': 'Non supportato',
+  'settings.storageUnknown': 'Verifica…',
+  'settings.storageHintGranted':
+    'Il browser ha promesso di conservare i tuoi dati (libri e salvataggi) e non dovrebbe cancellarli. È lo stato ideale.',
+  'settings.storageHintDenied':
+    'I dati sono conservati “best-effort”: sotto pressione di memoria iOS potrebbe cancellarli. Usa “Esporta tutti i salvataggi” qui sopra come rete di sicurezza.',
+  'settings.storageHintUnsupported':
+    'Questo browser non espone l’API di persistenza. I dati di solito restano, ma esporta i salvataggi regolarmente per sicurezza.',
+  'settings.storageHintUnknown': 'Richiesta al browser in corso…',
 
   // Number generator
   'num.title': 'Genera numero',
