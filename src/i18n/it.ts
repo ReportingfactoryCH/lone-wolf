@@ -55,6 +55,17 @@ export const it: Record<keyof typeof en, string> = {
   'settings.theme': 'Tema',
   'settings.themeDark': 'Scuro',
   'settings.themeLight': 'Chiaro',
+  'settings.backup': 'Backup salvataggi',
+  'settings.backupHint':
+    'Esporta tutti i salvataggi (tutte le partite, tutti i libri) in un unico file. Gli EPUB non sono inclusi: ricaricali dalla libreria e i salvataggi si ri-agganciano per titolo del libro.',
+  'settings.export': '⬇︎ Esporta tutti i salvataggi',
+  'settings.import': '⬆︎ Importa salvataggi',
+  'settings.exportDone': 'Esportati {n} salvataggi.',
+  'settings.exportEmpty': 'Nessun salvataggio da esportare.',
+  'settings.importDone': 'Importati {n} salvataggi ({linked} agganciati ai libri).',
+  'settings.importMissing':
+    'Nessun libro trovato per: {titles}. Carica questi EPUB nella libreria e i salvataggi corrispondenti verranno ripristinati automaticamente.',
+  'settings.importFailed': 'Import fallito: {err}',
 
   // Number generator
   'num.title': 'Genera numero',
@@ -74,13 +85,13 @@ export const it: Record<keyof typeof en, string> = {
   'chart.enduranceCritical': '≤ 0 — situazione critica (decidi tu)',
   'chart.kai': 'Discipline Kai',
   'chart.kaiPlaceholder': 'es. Mimetismo, Sesto Senso…',
-  'chart.gold': 'Corone d’oro (Belt Pouch)',
-  'chart.goldHint': 'riferimento max 50',
-  'chart.goldWarn': 'oltre il limite classico di 50 (consentito)',
-  'chart.itemsNote': 'Armi, zaino e oggetti speciali si gestiscono nel pannello 🎒 Zaino.',
+  'chart.itemsNote': 'Armi, zaino, oggetti speciali e oro si gestiscono nel pannello 🎒 Zaino.',
 
   // Inventory
   'inv.title': 'Inventario',
+  'inv.gold': 'Corone d’oro (Belt Pouch)',
+  'inv.goldHint': 'riferimento max 50',
+  'inv.goldWarn': 'oltre il limite classico di 50 (consentito)',
   'inv.weapons': 'Armi',
   'inv.weaponsPlaceholder': 'es. Spada, Lancia…',
   'inv.backpack': 'Zaino (Backpack)',

@@ -17,6 +17,17 @@ export function Inventory({ onClose }: { onClose: () => void }) {
   return (
     <Sheet title={t('inv.title')} icon="🎒" onClose={onClose}>
       <div className="flex flex-col gap-4">
+        {/* Belt Pouch — oro. Gestito qui: lo Zaino tiene tutta l'oggettistica,
+            la Scheda resta ai dati del personaggio. */}
+        <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]/60 p-3">
+          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">{t('inv.gold')}</h3>
+          <Stepper
+            value={chart.goldCrowns}
+            onChange={(v) => patch({ goldCrowns: v })}
+            hint={t('inv.goldHint')}
+            warn={chart.goldCrowns > 50 ? t('inv.goldWarn') : undefined}
+          />
+        </section>
         <EditableList
           title={t('inv.weapons')}
           items={chart.weapons}

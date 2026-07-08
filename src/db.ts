@@ -93,6 +93,12 @@ export interface Playthrough {
   activeCombat: CombatState | null
   warLog: WarLogEntry[]
   updatedAt: number
+  // Solo per i salvataggi IMPORTATI senza libro corrispondente in libreria.
+  // Il bookId numerico non è portabile tra dispositivi: al reimport ri-agganciamo
+  // per TITOLO. Se il libro non c'è ancora, il playthrough resta "orfano" con qui
+  // il titolo atteso; appena quell'EPUB viene caricato lo ri-agganciamo
+  // (vedi relinkOrphanPlaythroughs in utils/saveExport.ts). Campo non indicizzato.
+  orphanBookTitle?: string
 }
 
 export class GameDB extends Dexie {

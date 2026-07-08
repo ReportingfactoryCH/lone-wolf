@@ -4,6 +4,7 @@ import { db, newPlaythrough, type BookRecord, type Playthrough } from '../db'
 import { useStore } from '../store'
 import type { PersistState } from '../hooks/usePersistence'
 import { useT } from '../i18n/useT'
+import { relinkOrphanPlaythroughs } from '../utils/saveExport'
 
 // Schermata iniziale: libreria dei libri salvati in IndexedDB + caricamento EPUB.
 export function Library({ persist }: { persist: PersistState }) {
@@ -19,7 +20,9 @@ export function Library({ persist }: { persist: PersistState }) {
     try {
       const title = file.name.replace(/\.epub$/i, '')
       // Un File È già un Blob: lo salviamo direttamente.
-      await db.books.add({ title, blob: file, addedAt: Date.now() })
+      const bookId = await db.books.add({ title, blob: file, addedAt: Date.now() })
+      // Ri-aggancia eventuali salvataggi importati e rimasti orfani per questo titolo.
+      await relinkOrphanPlaythroughs(bookId, title)
     } finally {
       setBusy(false)
     }

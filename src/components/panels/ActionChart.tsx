@@ -72,17 +72,6 @@ export function ActionChart({ onClose }: { onClose: () => void }) {
           addPlaceholder={t('chart.kaiPlaceholder')}
         />
 
-        {/* Belt Pouch — oro. */}
-        <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]/60 p-3">
-          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">{t('chart.gold')}</h3>
-          <Stepper
-            value={chart.goldCrowns}
-            onChange={(v) => patch({ goldCrowns: v })}
-            hint={t('chart.goldHint')}
-            warn={chart.goldCrowns > 50 ? t('chart.goldWarn') : undefined}
-          />
-        </section>
-
         <p className="text-center text-xs text-[var(--color-ink)]/50">{t('chart.itemsNote')}</p>
       </div>
     </Sheet>

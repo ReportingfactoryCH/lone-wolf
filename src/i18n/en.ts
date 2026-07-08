@@ -54,6 +54,17 @@ export const en = {
   'settings.theme': 'Theme',
   'settings.themeDark': 'Dark',
   'settings.themeLight': 'Light',
+  'settings.backup': 'Saves backup',
+  'settings.backupHint':
+    'Exports every save (all games, all books) to one file. EPUBs are not included: reload them from the library and saves re-link by book title.',
+  'settings.export': '⬇︎ Export all saves',
+  'settings.import': '⬆︎ Import saves',
+  'settings.exportDone': '{n} saves exported.',
+  'settings.exportEmpty': 'No saves to export yet.',
+  'settings.importDone': 'Imported {n} saves ({linked} linked to books).',
+  'settings.importMissing':
+    'No book found for: {titles}. Load these EPUBs into the library and the matching saves will be restored automatically.',
+  'settings.importFailed': 'Import failed: {err}',
 
   // Number generator
   'num.title': 'Generate number',
@@ -73,13 +84,13 @@ export const en = {
   'chart.enduranceCritical': '≤ 0 — critical situation (your call)',
   'chart.kai': 'Kai Disciplines',
   'chart.kaiPlaceholder': 'e.g. Camouflage, Sixth Sense…',
-  'chart.gold': 'Gold Crowns (Belt Pouch)',
-  'chart.goldHint': 'reference max 50',
-  'chart.goldWarn': 'over the classic limit of 50 (allowed)',
-  'chart.itemsNote': 'Weapons, backpack and special items are managed in the 🎒 Backpack panel.',
+  'chart.itemsNote': 'Weapons, backpack, special items and gold are managed in the 🎒 Backpack panel.',
 
   // Inventory
   'inv.title': 'Backpack',
+  'inv.gold': 'Gold Crowns (Belt Pouch)',
+  'inv.goldHint': 'reference max 50',
+  'inv.goldWarn': 'over the classic limit of 50 (allowed)',
   'inv.weapons': 'Weapons',
   'inv.weaponsPlaceholder': 'e.g. Sword, Spear…',
   'inv.backpack': 'Backpack',

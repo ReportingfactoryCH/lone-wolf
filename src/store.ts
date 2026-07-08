@@ -44,6 +44,46 @@ interface AppState {
   addWarLog: (entry: Omit<WarLogEntry, 'ts'>) => void
 }
 
+// --- Preferenze UI persistite in localStorage -----------------------------
+// fontSize e darkMode sono impostazioni dell'app (non del playthrough): vanno
+// salvate qui, altrimenti ogni riavvio della PWA le riporta ai default.
+const LS_DARK = 'lupo-dark'
+const LS_FONT = 'lupo-font'
+
+function loadDark(): boolean {
+  try {
+    const v = localStorage.getItem(LS_DARK)
+    return v == null ? true : v === '1'
+  } catch {
+    return true
+  }
+}
+
+function loadFont(): number {
+  try {
+    const v = Number(localStorage.getItem(LS_FONT))
+    return Number.isFinite(v) && v > 0 ? v : 100
+  } catch {
+    return 100
+  }
+}
+
+function saveDark(dark: boolean) {
+  try {
+    localStorage.setItem(LS_DARK, dark ? '1' : '0')
+  } catch {
+    /* localStorage non disponibile: la preferenza resta solo in memoria */
+  }
+}
+
+function saveFont(f: number) {
+  try {
+    localStorage.setItem(LS_FONT, String(f))
+  } catch {
+    /* idem */
+  }
+}
+
 let saveTimer: ReturnType<typeof setTimeout> | null = null
 
 async function persistNow(pt: Playthrough) {
@@ -65,8 +105,8 @@ export const useStore = create<AppState>((set, get) => ({
   bookId: null,
   playthrough: null,
   openPanel: null,
-  darkMode: true,
-  fontSize: 100,
+  darkMode: loadDark(),
+  fontSize: loadFont(),
   lightboxSrc: null,
   lang: detectLang(),
 
@@ -80,9 +120,18 @@ export const useStore = create<AppState>((set, get) => ({
 
   setPanel: (p) => set((s) => ({ openPanel: s.openPanel === p ? null : p })),
 
-  toggleDark: () => set((s) => ({ darkMode: !s.darkMode })),
+  toggleDark: () =>
+    set((s) => {
+      const darkMode = !s.darkMode
+      saveDark(darkMode)
+      return { darkMode }
+    }),
 
-  setFontSize: (f) => set({ fontSize: Math.max(70, Math.min(180, f)) }),
+  setFontSize: (f) => {
+    const fontSize = Math.max(70, Math.min(180, f))
+    saveFont(fontSize)
+    set({ fontSize })
+  },
 
   setLang: (l) => {
     try {
