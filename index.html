@@ -14,59 +14,56 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Lupo Solitario" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Splash screen native iOS (PWA installata): iOS mostra queste immagini
+         durante il cold start, prima ancora del primo paint dell'HTML. Ogni tag
+         deve combaciare ESATTAMENTE con device-width/height + pixel-ratio del
+         device, altrimenti iOS lo ignora e mostra schermo vuoto. Generate da
+         design/base_splash.png (cover-crop iPad, fit-width + pad navy iPhone). -->
+    <link rel="apple-touch-startup-image" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/ios/apple-splash-1320-2868.jpg" />
+    <link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/ios/apple-splash-1206-2622.jpg" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/ios/apple-splash-1290-2796.jpg" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/ios/apple-splash-1179-2556.jpg" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/ios/apple-splash-1284-2778.jpg" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/ios/apple-splash-1170-2532.jpg" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/ios/apple-splash-1125-2436.jpg" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/ios/apple-splash-1242-2688.jpg" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/splash/ios/apple-splash-828-1792.jpg" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/splash/ios/apple-splash-1242-2208.jpg" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/splash/ios/apple-splash-750-1334.jpg" />
+    <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/splash/ios/apple-splash-640-1136.jpg" />
+    <link rel="apple-touch-startup-image" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/splash/ios/apple-splash-2048-2732.jpg" />
+    <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/splash/ios/apple-splash-1668-2388.jpg" />
+    <link rel="apple-touch-startup-image" media="(device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/splash/ios/apple-splash-1640-2360.jpg" />
+    <link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/splash/ios/apple-splash-1536-2048.jpg" />
     <title>Lupo Solitario</title>
     <!-- Splash inline: si dipinge immediatamente col primo paint dell'HTML (prima
          che il bundle JS venga scaricato/eseguito), coprendo il gap di avvio anche
          da PWA installata su iOS. Rimosso da main.tsx quando l'app è montata.
-         Stessi colori del tema (background_color del manifest) → transizione senza
-         sfarfallii. Nessun testo tradotto: solo il wordmark del brand. -->
+         Mostra la stessa illustrazione delle splash native iOS (splash-web.jpg),
+         così native → inline → app è una transizione senza salti di colore.
+         Sfondo navy #0b0e18 = colore dei bordi di pad delle splash native →
+         con background-size:contain i bordi combaciano. L'illustrazione contiene
+         già il wordmark "LONE WOLF": niente testo/SVG aggiuntivo. -->
     <style>
       #splash {
         position: fixed;
         inset: 0;
         z-index: 9999;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 22px;
-        background: #1a1206;
-        color: #c9a24c;
-        font-family: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+        background-color: #0b0e18;
+        background-image: url("/splash/splash-web.jpg");
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: contain;
         transition: opacity 0.4s ease;
       }
       #splash.splash--hide {
         opacity: 0;
         pointer-events: none;
       }
-      #splash .splash-mark {
-        width: 96px;
-        height: 96px;
-        filter: drop-shadow(0 0 14px rgba(201, 162, 76, 0.35));
-        animation: splash-pulse 1.8s ease-in-out infinite;
-      }
-      #splash .splash-word {
-        font-size: 26px;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-      }
-      @keyframes splash-pulse {
-        0%, 100% { transform: scale(1); opacity: 0.9; }
-        50% { transform: scale(1.06); opacity: 1; }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        #splash .splash-mark { animation: none; }
-      }
     </style>
   </head>
   <body>
-    <div id="splash" role="status" aria-label="Lupo Solitario">
-      <svg class="splash-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M32 8 L56 32 L32 56 L8 32 Z" fill="none" stroke="#c9a24c" stroke-width="3.5" />
-        <path d="M32 20 L44 32 L32 44 L20 32 Z" fill="#c9a24c" />
-      </svg>
-      <div class="splash-word">Lupo Solitario</div>
-    </div>
+    <div id="splash" role="status" aria-label="Lupo Solitario"></div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

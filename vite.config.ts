@@ -33,7 +33,7 @@ export default defineConfig({
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       workbox: {
         // L'app shell (JS/CSS/HTML/font) viene precachata.
-        globPatterns: ['**/*.{js,css,html,svg,png,woff,woff2,ico}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,jpg,jpeg,woff,woff2,ico}'],
         // L'EPUB e i salvataggi vivono in IndexedDB, non serve cachearli qui.
         maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
       },
