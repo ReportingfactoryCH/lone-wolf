@@ -30,7 +30,7 @@ export default defineConfig({
       // La registrazione del SW la facciamo a mano in main.tsx (per agganciare il
       // controllo periodico degli aggiornamenti) → niente auto-inject del plugin.
       injectRegister: false,
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
+      includeAssets: ['favicon-16.png', 'favicon-32.png', 'apple-touch-icon.png'],
       workbox: {
         // L'app shell (JS/CSS/HTML/font) viene precachata.
         globPatterns: ['**/*.{js,css,html,svg,png,jpg,jpeg,woff,woff2,ico}'],
@@ -48,9 +48,9 @@ export default defineConfig({
         start_url: '.',
         scope: '.',
         icons: [
-          { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'pwa-512.png', sizes: '512x512', type: 'image/png' },
-          { src: 'pwa-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: 'pwa-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: 'pwa-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: 'pwa-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
     }),
