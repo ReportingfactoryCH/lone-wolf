@@ -39,7 +39,7 @@ export default defineConfig({
       },
       manifest: {
         name: 'Lupo Solitario',
-        short_name: 'Lupo Sol.',
+        short_name: 'Lupo Solitario',
         description: 'Reader PWA offline per gamebook Lupo Solitario / Lone Wolf',
         display: 'standalone',
         orientation: 'portrait',
