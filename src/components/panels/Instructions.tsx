@@ -43,6 +43,15 @@ export function Instructions({ onClose }: { onClose: () => void }) {
       <div className="flex flex-col gap-4">
         <p className="text-sm text-[var(--color-ink)]/70">{t('help.intro')}</p>
 
+        {/* Principio di prodotto in cima: è la prima cosa da capire. */}
+        <section className="rounded-xl border border-[var(--color-gold-dim)] bg-[var(--color-panel-2)] p-3">
+          <h3 className="mb-2 flex items-center gap-2 font-semibold text-[var(--color-gold)]">
+            <span aria-hidden>🗡️</span>
+            {t('help.principle.title')}
+          </h3>
+          <p className="text-sm text-[var(--color-ink)]/80">{t('help.principle.body')}</p>
+        </section>
+
         {SECTIONS.map((s) => (
           <section
             key={s.title}
@@ -59,15 +68,6 @@ export function Instructions({ onClose }: { onClose: () => void }) {
             </ul>
           </section>
         ))}
-
-        {/* Principio di prodotto, evidenziato in oro. */}
-        <section className="rounded-xl border border-[var(--color-gold-dim)] bg-[var(--color-panel-2)] p-3">
-          <h3 className="mb-2 flex items-center gap-2 font-semibold text-[var(--color-gold)]">
-            <span aria-hidden>🗡️</span>
-            {t('help.principle.title')}
-          </h3>
-          <p className="text-sm text-[var(--color-ink)]/80">{t('help.principle.body')}</p>
-        </section>
       </div>
     </Sheet>
   )
