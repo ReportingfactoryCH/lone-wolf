@@ -14,6 +14,7 @@ import { WarLog } from './components/panels/WarLog'
 import { Combat } from './components/panels/Combat'
 import { GoToSection } from './components/panels/GoToSection'
 import { Settings } from './components/panels/Settings'
+import { Instructions } from './components/panels/Instructions'
 import { db } from './db'
 import { buildSectionIndex, attachLinkInterceptor } from './utils/sections'
 import { setReaderControl } from './utils/readerControl'
@@ -65,8 +66,9 @@ export default function App() {
     return (
       <>
         <Library persist={persist} />
-        {/* Impostazioni raggiungibili anche dalla Libreria */}
+        {/* Impostazioni e Istruzioni raggiungibili anche dalla Libreria */}
         {openPanel === 'settings' && <Settings onClose={() => setPanel(null)} persist={persist} />}
+        {openPanel === 'instructions' && <Instructions onClose={() => setPanel(null)} />}
       </>
     )
   }

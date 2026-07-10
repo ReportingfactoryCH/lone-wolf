@@ -14,7 +14,16 @@ import { detectLang, type Lang } from './i18n'
 // con debounce (vedi persist()/scheduleSave) per non scrivere ad ogni scroll.
 // ---------------------------------------------------------------------------
 
-export type PanelId = 'number' | 'chart' | 'inventory' | 'warlog' | 'combat' | 'goto' | 'settings' | null
+export type PanelId =
+  | 'number'
+  | 'chart'
+  | 'inventory'
+  | 'warlog'
+  | 'combat'
+  | 'goto'
+  | 'settings'
+  | 'instructions'
+  | null
 
 interface AppState {
   view: 'library' | 'reader'

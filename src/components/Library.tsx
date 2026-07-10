@@ -68,13 +68,21 @@ export function Library({ persist }: { persist: PersistState }) {
       <header className="px-4 pt-4">
         <div className="flex items-start justify-between gap-2">
           <h1 className="text-2xl font-bold text-[var(--color-gold)]">Lupo Solitario</h1>
-          <button
-            className="touch flex items-center justify-center rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 active:bg-[var(--color-line)]"
-            onClick={() => setPanel('settings')}
-            aria-label={t('lib.settings')}
-          >
-            ⚙️
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              className="touch flex items-center justify-center gap-1 rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 text-sm font-semibold text-[var(--color-ink)] active:bg-[var(--color-line)]"
+              onClick={() => setPanel('instructions')}
+            >
+              ❓ {t('help.button')}
+            </button>
+            <button
+              className="touch flex items-center justify-center rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 active:bg-[var(--color-line)]"
+              onClick={() => setPanel('settings')}
+              aria-label={t('lib.settings')}
+            >
+              ⚙️
+            </button>
+          </div>
         </div>
         {/* Marcatore di build: cambia a ogni deploy → conferma di non essere in cache. */}
         <p className="font-mono text-[10px] text-[var(--color-gold-dim)]">build {__BUILD_ID__}</p>

@@ -45,6 +45,69 @@ export const it: Record<keyof typeof en, string> = {
   'lib.playthroughName': 'Partita {n}',
   'lib.settings': 'Impostazioni',
 
+  // Istruzioni / guida
+  'help.button': 'Istruzioni',
+  'help.title': 'Come si usa l’app',
+  'help.intro': 'Guida rapida all’app. Tocca ✕ per chiudere e tornare alla libreria.',
+  'help.load.title': 'Caricare un libro',
+  'help.load.b1': 'Tocca “＋ Carica EPUB” e scegli un file .epub dal dispositivo.',
+  'help.load.b2': 'Il libro viene salvato sul dispositivo: lo ritrovi anche offline e dopo un riavvio.',
+  'help.load.b3':
+    '“Apri” riprende l’ultima partita; “Nuova partita” ricomincia da zero e cancella i salvataggi di quel libro — esportali prima se vuoi conservarli.',
+  'help.load.b4': 'I gamebook di Lupo Solitario si scaricano gratis da Project Aon.',
+  'help.read.title': 'Leggere e navigare',
+  'help.read.b1': 'La posizione di lettura viene salvata automaticamente mentre leggi.',
+  'help.read.b2': 'Usa A− / A+ in alto per la dimensione del testo; cambia tema scuro/chiaro dalle Impostazioni.',
+  'help.read.b3':
+    'In fondo a ogni pagina: ‹ Precedente / Successiva ›, ↩ Indietro (torna al punto di prima) e 🧭 Sezione.',
+  'help.read.b4':
+    'Tocca un link interno del libro (es. “vai al 217”) per saltare — il salto viene annotato nel Registro di guerra.',
+  'help.read.b5': 'Tocca una mappa o un’illustrazione per aprirla a tutto schermo con lo zoom.',
+  'help.goto.title': 'Vai alla sezione e segnalibri',
+  'help.goto.b1': 'Inserisci il numero di sezione e premi Vai — i gamebook si navigano per sezione, non per pagina.',
+  'help.goto.b2': 'Aggiungi un segnalibro alla pagina corrente per ritrovarla al volo (utile per mappe o regole).',
+  'help.chart.title': 'Scheda del personaggio (Action Chart)',
+  'help.chart.b1':
+    'Combat Skill iniziale 10–19 ed Endurance iniziale 20–29 (10/20 più una cifra estratta 0–9).',
+  'help.chart.b2':
+    'Ogni valore è sempre modificabile a mano — anche a metà combattimento (es. aggiungi punti dopo una pozione).',
+  'help.chart.b3': 'I limiti classici sono solo avvisi: l’app non ti impedisce mai di inserire un valore.',
+  'help.inv.title': 'Zaino e oggetti',
+  'help.inv.b1':
+    'Armi (rif. max 2), Zaino (rif. max 8), Oggetti speciali (senza limite), Corone d’oro (rif. max 50) e Pasti.',
+  'help.inv.b2': 'Aggiungi, rinomina o rimuovi ogni voce quando vuoi.',
+  'help.num.title': 'Generatore di numeri',
+  'help.num.b1':
+    'Tocca per estrarre una cifra 0–9 (Lupo Solitario non usa dadi). Ogni estrazione va nel Registro di guerra.',
+  'help.combat.title': 'Helper di combattimento',
+  'help.combat.b1':
+    'È un assistente, non un arbitro: lavora su una copia dei tuoi valori e non modifica mai la scheda da solo.',
+  'help.combat.b2':
+    '“Nuovo combattimento”: scegli se importare Endurance e Combat Skill dalla scheda, poi inserisci i dati del nemico.',
+  'help.combat.b3':
+    'A ogni round: estrai un numero e l’app propone le perdite dalla CRT — applicale, correggile o ignorale.',
+  'help.combat.b4':
+    'Puoi modificare qualsiasi valore (tuo e del nemico) in ogni momento; ogni modifica compare nello Storico.',
+  'help.combat.b5':
+    '“Aggiorna resistenza nel registro” copia l’Endurance nella scheda — solo quando lo premi tu, mai in automatico.',
+  'help.combat.b6':
+    '“Fuggi” termina lo scontro subendo solo la tua perdita del round; il nemico non la subisce, poi salti alla sezione del libro.',
+  'help.combat.b7':
+    'Puoi uscire dal combattimento, cambiare sezione e riprenderlo dopo: lo scontro resta aperto finché non lo chiudi.',
+  'help.combat.b8': 'Lo Storico è un diario di sola lettura: per “tornare indietro” correggi i valori a mano.',
+  'help.combat.b9': 'Se la tabella CRT non è compilata, inserisci le perdite a mano — lo scontro funziona comunque.',
+  'help.warlog.title': 'Registro di guerra',
+  'help.warlog.b1': 'Un diario cronologico: salti di sezione, estrazioni, round di combattimento e le tue note.',
+  'help.warlog.b2': 'Tocca una voce di navigazione per tornare a quel punto; aggiungi note libere quando vuoi.',
+  'help.backup.title': 'Impostazioni e backup',
+  'help.backup.b1': 'Cambia la lingua dell’interfaccia e il tema chiaro/scuro.',
+  'help.backup.b2':
+    'Esporta i salvataggi in un file JSON come rete di sicurezza (iOS può cancellare i dati) e reimportali quando vuoi.',
+  'help.backup.b3': 'Gli EPUB non sono nel backup: ricaricali e i salvataggi si ri-agganciano per titolo del libro.',
+  'help.principle.title': 'Sei tu l’arbitro',
+  'help.principle.body':
+    'L’app è un foglio di carta intelligente, non un motore di regole. Tutto ciò che è automatico è solo un suggerimento: puoi sempre scavalcarlo, modificarlo o ignorarlo.',
+
   // Reader (App)
   'reader.loading': 'Caricamento…',
   'reader.bookLoading': 'Caricamento del libro…',

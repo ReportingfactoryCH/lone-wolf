@@ -44,6 +44,64 @@ export const en = {
   'lib.playthroughName': 'Game {n}',
   'lib.settings': 'Settings',
 
+  // Instructions / help
+  'help.button': 'Guide',
+  'help.title': 'How to use the app',
+  'help.intro': 'A quick guide to the app. Tap ✕ to close and go back to the library.',
+  'help.load.title': 'Loading a book',
+  'help.load.b1': 'Tap “＋ Load EPUB” and pick a .epub file from your device.',
+  'help.load.b2': 'The book is saved on your device: you’ll find it again offline and after a restart.',
+  'help.load.b3':
+    '“Open” resumes your last game; “New game” starts over and deletes that book’s saves — export them first if you want to keep them.',
+  'help.load.b4': 'The Lone Wolf gamebooks are available for free from Project Aon.',
+  'help.read.title': 'Reading & navigating',
+  'help.read.b1': 'Your reading position is saved automatically as you read.',
+  'help.read.b2': 'Use A− / A+ at the top to change text size; switch the dark/light theme in Settings.',
+  'help.read.b3':
+    'At the bottom of each page: ‹ Previous / Next ›, ↩ Back (returns to where you were) and 🧭 Section.',
+  'help.read.b4': 'Tap an in-book link (e.g. “turn to 217”) to jump — the jump is recorded in the War Log.',
+  'help.read.b5': 'Tap a map or illustration to open it full-screen with zoom.',
+  'help.goto.title': 'Go to a section & bookmarks',
+  'help.goto.b1': 'Enter a section number and press Go — gamebooks are navigated by section, not by page.',
+  'help.goto.b2': 'Bookmark the current page to jump back to it later (handy for maps or rules pages).',
+  'help.chart.title': 'Character sheet (Action Chart)',
+  'help.chart.b1': 'Initial Combat Skill is 10–19 and initial Endurance 20–29 (10/20 plus a drawn digit 0–9).',
+  'help.chart.b2': 'Every value is always editable by hand — even mid-combat (e.g. add points after a potion).',
+  'help.chart.b3': 'The classic limits are only hints: the app never stops you from entering a value.',
+  'help.inv.title': 'Backpack & items',
+  'help.inv.b1':
+    'Weapons (ref. max 2), Backpack (ref. max 8), Special Items (no limit), Gold Crowns (ref. max 50) and Meals.',
+  'help.inv.b2': 'Add, rename or remove any entry whenever you like.',
+  'help.num.title': 'Number generator',
+  'help.num.b1': 'Tap to draw a single digit 0–9 (Lone Wolf uses no dice). Every draw goes to the War Log.',
+  'help.combat.title': 'Combat helper',
+  'help.combat.b1':
+    'It’s an assistant, not a referee: it works on a copy of your values and never changes the chart on its own.',
+  'help.combat.b2':
+    '“New combat”: choose whether to import Endurance and Combat Skill from the chart, then enter the enemy’s data.',
+  'help.combat.b3':
+    'Each round: draw a number and the app proposes the losses from the CRT — apply, adjust or ignore them.',
+  'help.combat.b4':
+    'You can edit any value (yours and the enemy’s) at any time; every change appears in the History.',
+  'help.combat.b5':
+    '“Update endurance in the chart” copies Endurance into the sheet — only when you tap it, never automatically.',
+  'help.combat.b6':
+    '“Evade” ends the fight taking only your round’s loss; the enemy takes none, then you jump to the book’s section.',
+  'help.combat.b7': 'You can leave combat, change section and resume later: the fight stays open until you end it.',
+  'help.combat.b8': 'The History is a read-only diary: to “undo”, just correct the values by hand.',
+  'help.combat.b9': 'If the CRT table isn’t filled in, enter the losses by hand — the fight still works.',
+  'help.warlog.title': 'War Log',
+  'help.warlog.b1': 'A chronological diary: section jumps, number draws, combat rounds and your own notes.',
+  'help.warlog.b2': 'Tap a navigation entry to jump back to that point; add free notes anytime.',
+  'help.backup.title': 'Settings & backup',
+  'help.backup.b1': 'Change the interface language and the light/dark theme.',
+  'help.backup.b2':
+    'Export your saves to a JSON file as a safety net (iOS can evict data), and re-import them anytime.',
+  'help.backup.b3': 'EPUBs aren’t in the backup: reload them and the saves re-link by book title.',
+  'help.principle.title': 'You are the referee',
+  'help.principle.body':
+    'The app is a smart sheet of paper, not a rules engine. Everything automatic is only a suggestion: you can always override it, change it or ignore it.',
+
   // Reader (App)
   'reader.loading': 'Loading…',
   'reader.bookLoading': 'Loading the book…',
