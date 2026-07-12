@@ -1,121 +1,135 @@
-# Lupo Solitario — PWA reader per gamebook
+# Lupo Solitario — a PWA reader for Lone Wolf gamebooks
 
-PWA **offline-first** per leggere e giocare i gamebook *Lone Wolf* / Lupo Solitario
-(EPUB di [Project Aon](https://www.projectaon.org)) da iPhone, con Action Chart,
-inventario, generatore di numeri, helper di combattimento e registro di guerra.
+An **offline-first PWA** to read and *play* the **Lone Wolf** gamebooks
+(the EPUBs freely published by [Project Aon](https://www.projectaon.org)) on your
+phone: EPUB reader plus Action Chart, inventory, random number generator, combat
+helper, bookmarks and a war log. Designed mobile-first for iPhone, installable
+on the home screen, fully functional with no network.
+
+> **Unofficial fan project** — not affiliated with, or endorsed by, the estate of
+> Joe Dever or Project Aon. See [Legal](#legal--lone-wolf-and-project-aon) below.
 
 Stack: **Vite + React + TypeScript**, **Tailwind v4**, **react-reader (EpubView)**,
 **Dexie** (IndexedDB), **Zustand**, **vite-plugin-pwa** (Workbox).
 
+| Library | Reader |
+| --- | --- |
+| ![Library](library.png) | ![Reader](reader.png) |
+
 ---
 
-## Comandi
+## Design principle: the player is the referee
+
+With the paper gamebook the player was the only referee: you could flee a fight,
+ignore an unlucky result, or fix your points by hand. This app **assists, it does
+not enforce**. Everything automated is a **suggestion you can override**: every
+value (Endurance, Combat Skill, gold, inventory, combat values) is always
+editable by hand, even mid-combat. No automatic game over, no flow that traps
+you. Combat works on a **copy** of your values; the Action Chart is updated
+**only** when you tap *"Update endurance in the chart"*.
+
+---
+
+## Commands
 
 ```bash
-npm install         # installa le dipendenze
-npm run dev         # sviluppo (http://localhost:4200) — il service worker NON è attivo qui
-npm run build       # build di produzione (genera anche il service worker)
-npm run preview     # serve la build di produzione su http://localhost:4200
+npm install         # install dependencies
+npm run dev         # development (http://localhost:4200) — the service worker is NOT active here
+npm run build       # production build (also generates the service worker)
+npm run preview     # serve the production build at http://localhost:4200
 ```
 
-### Provare l'offline (criterio di completamento)
+### Testing offline mode
 
-Il service worker si registra **solo in contesto sicuro** (HTTPS o `localhost`) e
-**solo nella build di produzione**:
+The service worker only registers in a **secure context** (HTTPS or `localhost`)
+and only in the **production build**:
 
 ```bash
 npm run build && npm run preview
 ```
 
-Poi apri `http://localhost:4200`, carica un EPUB, naviga un po', quindi in
-DevTools → **Network → Offline** (o spegni la rete) e **ricarica**: l'app si
-riapre e funziona, EPUB e salvataggi inclusi (sono in IndexedDB; l'app shell è in
-Cache Storage).
+Open `http://localhost:4200`, load an EPUB, navigate a bit, then in
+DevTools → **Network → Offline** (or turn off the network) and **reload**: the
+app comes back up and works, EPUB and saves included (they live in IndexedDB;
+the app shell is in Cache Storage).
 
 ---
 
-## Test su iPhone reale
+## Testing on a real iPhone
 
-Il service worker richiede **HTTPS** (o `localhost`). Da iPhone hai due strade:
+The service worker requires **HTTPS** (or `localhost`). From an iPhone you have
+two options:
 
-1. **Tunnel HTTPS** verso la tua macchina di sviluppo, es.:
+1. **HTTPS tunnel** to your dev machine, e.g.:
    ```bash
-   npm run build && npm run preview   # poi esponi la porta 4200 via un tunnel HTTPS
+   npm run build && npm run preview   # then expose port 4200 through an HTTPS tunnel
    ```
-   (ngrok, cloudflared, ecc. — il punto è servire la build via HTTPS.)
-2. **Deploy su un host statico HTTPS** (Netlify, Vercel, GitHub Pages, …):
-   pubblica il contenuto di `dist/`.
+   (ngrok, cloudflared, etc. — the point is serving the build over HTTPS.)
+2. **Deploy to a static HTTPS host** (Netlify, Vercel, GitHub Pages, …):
+   publish the contents of `dist/`. A `Dockerfile` (nginx, PWA-aware cache
+   headers) is also included for self-hosting.
 
-### Aggiungere alla schermata Home (installare la PWA)
+### Add to Home Screen (install the PWA)
 
-Su iPhone, in **Safari**: apri il sito → tasto **Condividi** → **Aggiungi a Home**.
-Avvia l'app dall'icona: parte in modalità **standalone** (a tutto schermo, con
-safe-area per notch/Dynamic Island/home indicator). La **verifica finale va fatta
-sull'iPhone reale**: le quirk di `dvh`, safe-area e iframe del reader si vedono solo lì.
-
-> Nota: testa sia in Safari sia come **PWA installata**, in **portrait** (priorità)
-> e landscape.
-
----
-
-## Dati di gioco
-
-- **Combat Results Table (CRT)** — `src/data/crt.ts` è un **TEMPLATE con TODO**:
-  i valori NON sono inclusi (provengono dai materiali di Project Aon). Finché non
-  la compili, l'helper di combattimento funziona comunque e chiede di inserire i
-  danni **a mano**. Per popolarla: apri la CRT dal libro su Project Aon e riempi
-  ogni cella `{ lwLoss, enemyLoss }` (usa `K` per la morte istantanea).
-- **Discipline Kai** — `src/data/disciplines.ts` (le 10 del Libro 1).
+On iPhone, in **Safari**: open the site → **Share** → **Add to Home Screen**.
+Launch the app from its icon: it runs **standalone** (full screen, with
+safe-area support for the notch/Dynamic Island/home indicator). Do the **final
+check on a real iPhone**: the quirks of `dvh`, safe areas and the reader iframe
+only show up there. Test both in Safari and as an installed PWA, in portrait
+(priority) and landscape.
 
 ---
 
-## Principio di design: l'utente è l'arbitro
+## Game data
 
-Tutto ciò che è automatizzato è **scavalcabile**. Ogni valore (Endurance, Combat
-Skill, oro, inventario, valori del combattimento) è **sempre modificabile a mano**,
-anche durante un combattimento. Gli strumenti (generatore, CRT, helper di
-combattimento) **propongono**, non impongono: niente game over automatici, niente
-flussi che intrappolano. Il combattimento lavora su una **copia**; l'Action Chart
-si aggiorna **solo** premendo *"Aggiorna resistenza nel registro"*.
-
----
-
-## Nota tecnica: EPUB come ArrayBuffer (non blob URL)
-
-L'EPUB caricato è salvato come **Blob** in Dexie. Per darlo al reader si legge il
-blob e si passa a `EpubView` come **`ArrayBuffer`**, NON come `URL.createObjectURL`.
-Motivo: epub.js deduce il tipo di input dall'**estensione dell'URL**, e un blob URL
-(`blob:…/uuid`) non ha estensione → verrebbe trattato come *directory* e il libro
-non si caricherebbe mai. Con l'ArrayBuffer epub.js riconosce l'archivio e lo
-decomprime (JSZip), restando 100% offline. Vedi `src/hooks/useBookUrl.ts`.
-(`URL.createObjectURL` + `revokeObjectURL` resta usato per il download dell'export
-JSON, dove è appropriato — `src/utils/saveExport.ts`.)
+- **Combat Results Table (CRT)** — `src/data/crt.ts` contains the table values
+  transcribed from the official Lone Wolf CRT as published by
+  [Project Aon](https://www.projectaon.org). They are used only to *propose*
+  round losses; the player can always correct or ignore them.
+- **Kai Disciplines** — `src/data/disciplines.ts` (the 10 disciplines of Book 1).
+- **No book content is bundled.** The app ships no text, illustrations or maps
+  from the gamebooks: you download the EPUBs yourself from Project Aon and load
+  them from your device.
 
 ---
 
-## Struttura
+## Technical note: EPUB as ArrayBuffer (not a blob URL)
+
+The loaded EPUB is stored as a **Blob** in Dexie. To feed it to the reader we
+read the blob and pass it to `EpubView` as an **`ArrayBuffer`**, NOT as
+`URL.createObjectURL`. Reason: epub.js infers the input type from the **URL
+extension**, and a blob URL (`blob:…/uuid`) has none → it would be treated as a
+*directory* and the book would never load. With an ArrayBuffer epub.js
+recognises the archive and unzips it (JSZip), staying 100% offline. See
+`src/hooks/useBookUrl.ts`. (`URL.createObjectURL` + `revokeObjectURL` is still
+used for the JSON export download, where it belongs — `src/utils/saveExport.ts`.)
+
+---
+
+## Structure
 
 ```
 src/
-  db.ts                 # schema Dexie (books, playthroughs) + default
-  store.ts              # stato globale (Zustand) + persistenza su Dexie
-  data/crt.ts           # Combat Results Table (TEMPLATE + TODO)
-  data/disciplines.ts   # Discipline Kai
+  db.ts                 # Dexie schema (books, playthroughs, pendingBookmarks) + defaults
+  store.ts              # global state (Zustand) + persistence to Dexie
+  data/crt.ts           # Combat Results Table (values from Project Aon)
+  data/disciplines.ts   # Kai Disciplines
+  i18n/                 # UI dictionaries (English + Italian)
   components/
-    Library.tsx         # libreria + caricamento EPUB
-    Reader.tsx          # wrapper EpubView, MEMOIZZATO (iframe stabile)
-    Header.tsx          # barra superiore + action bar inferiore (thumb-zone)
-    Sheet.tsx           # sheet full-screen riusabile (mobile-first, safe-area)
+    Library.tsx         # library + EPUB loading + copy character between books
+    Reader.tsx          # EpubView wrapper, MEMOIZED (stable iframe)
+    Header.tsx          # top bar + bottom action bar (thumb zone)
+    Sheet.tsx           # reusable full-screen sheet (mobile-first, safe-area)
     ui.tsx              # Stepper / TextField / EditableList
-    panels/             # NumberGenerator, ActionChart, Inventory, WarLog, Combat, GoToSection
+    panels/             # NumberGenerator, ActionChart, Inventory, WarLog, Combat, GoToSection, Settings, Instructions
   hooks/
-    useBookUrl.ts       # blob Dexie -> ArrayBuffer (vedi nota sopra)
-    usePersistence.ts   # navigator.storage.persist() + indicatore
+    useBookUrl.ts       # Dexie blob -> ArrayBuffer (see note above)
+    usePersistence.ts   # navigator.storage.persist() + indicator
   utils/
-    combat.ts           # logica di combattimento pura (proposte, storico)
-    sections.ts         # indice sezione->href + intercettazione link
-    saveExport.ts       # export/import JSON dei salvataggi
-    readerControl.ts    # ponte non-reattivo per "vai alla sezione"
+    combat.ts           # pure combat logic (proposals, history)
+    sections.ts         # section->href index + link interception
+    saveExport.ts       # JSON export/import of saves (incl. bookmarks & notes)
+    readerControl.ts    # non-reactive bridge for "go to section"
   App.tsx, main.tsx, index.css
 ```
 
@@ -123,10 +137,44 @@ src/
 
 ## Mobile-first (iPhone)
 
-- Contenitori full-screen con `100dvh` (niente `100vh`: salterebbe con la barra Safari).
-- `viewport-fit=cover` + `env(safe-area-inset-*)` su header e barre.
-- Target tattili ≥ 44px, input a `font-size: 16px` (niente zoom iOS al focus),
-  `inputMode="numeric"` per i campi numerici.
-- Pannelli come **sheet a tutto schermo**, chiudibili con il pulsante grande o `Esc`.
-- `navigator.storage.persist()` all'avvio (indicatore 🟢/🟡 nell'header) per ridurre
-  l'eviction; **export/import JSON** dei salvataggi come rete di sicurezza.
+- Full-screen containers use `100dvh` (never `100vh`: it jumps with the Safari bar).
+- `viewport-fit=cover` + `env(safe-area-inset-*)` on the header and bars.
+- Touch targets ≥ 44px, inputs at `font-size: 16px` (no iOS zoom on focus),
+  `inputMode="numeric"` for numeric fields.
+- Panels are **full-screen sheets**, dismissable with a large button or `Esc`.
+- `navigator.storage.persist()` on startup to reduce eviction; **JSON
+  export/import** of saves (bookmarks and free notes included) as a safety net.
+
+---
+
+## Contributing
+
+Issues and pull requests are welcome. Before submitting, please run
+`npm run build` (it type-checks and builds) and keep the core product principle
+in mind: **the app never enforces the rules — the player is the referee**.
+`CLAUDE.md` (in Italian) contains the full product spec and the reasoning behind
+the design constraints.
+
+---
+
+## Legal — Lone Wolf and Project Aon
+
+- **Lone Wolf** (Lupo Solitario) and all related characters, titles, settings
+  and game content were created by **Joe Dever** and are the intellectual
+  property of his estate. This project is an **unofficial, non-commercial fan
+  tool** and is not affiliated with, or endorsed by, the estate of Joe Dever,
+  Project Aon, or any publisher of the series.
+- The gamebooks themselves are **not included** in this repository or in the
+  app. They are distributed by [Project Aon](https://www.projectaon.org) under
+  the [Project Aon license](https://www.projectaon.org/en/Main/License): you
+  download the EPUBs from there and load them into the app yourself.
+- The **Combat Results Table** values in `src/data/crt.ts` are game mechanics
+  transcribed from the material published by Project Aon, included solely to
+  make this companion tool usable. If you are a rights holder and have any
+  concern about this, please open an issue and it will be addressed promptly.
+- The [MIT license](LICENSE) of this repository covers the **source code
+  only** — it grants no rights whatsoever over the Lone Wolf intellectual
+  property.
+
+Thanks to Joe Dever for the books, and to the Project Aon volunteers for
+keeping them alive.
