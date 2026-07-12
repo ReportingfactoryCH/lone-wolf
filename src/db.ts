@@ -92,6 +92,7 @@ export interface Playthrough {
   actionChart: ActionChart
   activeCombat: CombatState | null
   warLog: WarLogEntry[]
+  notes?: string // note libere dell'utente (pannello Scheda). Campo non indicizzato.
   updatedAt: number
   // Solo per i salvataggi IMPORTATI senza libro corrispondente in libreria.
   // Il bookId numerico non è portabile tra dispositivi: al reimport ri-agganciamo
@@ -101,14 +102,28 @@ export interface Playthrough {
   orphanBookTitle?: string
 }
 
+// Segnalibri importati da un backup PRIMA che il libro corrispondente sia in
+// libreria: parcheggiati qui per titolo e applicati al libro appena viene
+// caricato (vedi applyPendingBookmarks in utils/saveExport.ts). Speculare al
+// meccanismo dei playthrough orfani.
+export interface PendingBookmarks {
+  title: string // titolo del libro atteso (chiave primaria)
+  bookmarks: Bookmark[]
+}
+
 export class GameDB extends Dexie {
   books!: Table<BookRecord, number>
   playthroughs!: Table<Playthrough, number>
+  pendingBookmarks!: Table<PendingBookmarks, string>
   constructor() {
     super('lupo-solitario')
     this.version(1).stores({
       books: '++id, title, addedAt',
       playthroughs: '++id, bookId, updatedAt',
+    })
+    // v2: tabella dei segnalibri in attesa del loro libro (import backup).
+    this.version(2).stores({
+      pendingBookmarks: 'title',
     })
   }
 }
@@ -138,6 +153,7 @@ export function newPlaythrough(bookId: number, name = 'Partita 1'): Omit<Playthr
     actionChart: emptyActionChart(),
     activeCombat: null,
     warLog: [],
+    notes: '',
     updatedAt: Date.now(),
   }
 }

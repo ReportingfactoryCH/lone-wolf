@@ -4,7 +4,7 @@ import { db, newPlaythrough, type BookRecord, type Playthrough } from '../db'
 import { useStore } from '../store'
 import type { PersistState } from '../hooks/usePersistence'
 import { useT } from '../i18n/useT'
-import { relinkOrphanPlaythroughs } from '../utils/saveExport'
+import { applyPendingBookmarks, relinkOrphanPlaythroughs } from '../utils/saveExport'
 
 // Schermata iniziale: libreria dei libri salvati in IndexedDB + caricamento EPUB.
 export function Library({ persist }: { persist: PersistState }) {
@@ -14,6 +14,9 @@ export function Library({ persist }: { persist: PersistState }) {
   const setPanel = useStore((s) => s.setPanel)
   const fileRef = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState(false)
+  // Libro SORGENTE selezionato per "copia personaggio su un altro libro".
+  const [copyFrom, setCopyFrom] = useState<BookRecord | null>(null)
+  const [copyMsg, setCopyMsg] = useState<string | null>(null)
 
   const onFile = async (file: File) => {
     setBusy(true)
@@ -21,8 +24,10 @@ export function Library({ persist }: { persist: PersistState }) {
       const title = file.name.replace(/\.epub$/i, '')
       // Un File È già un Blob: lo salviamo direttamente.
       const bookId = await db.books.add({ title, blob: file, addedAt: Date.now() })
-      // Ri-aggancia eventuali salvataggi importati e rimasti orfani per questo titolo.
+      // Ri-aggancia eventuali salvataggi importati e rimasti orfani per questo
+      // titolo, e applica i segnalibri "parcheggiati" da un import di backup.
       await relinkOrphanPlaythroughs(bookId, title)
+      await applyPendingBookmarks(bookId, title)
     } finally {
       setBusy(false)
     }
@@ -51,6 +56,39 @@ export function Library({ persist }: { persist: PersistState }) {
     await db.playthroughs.where('bookId').equals(bookId).delete()
     const id = await db.playthroughs.add(newPlaythrough(bookId, t('lib.playthroughName', { n: 1 })))
     await openReader(bookId, id)
+  }
+
+  // Copia personaggio: prende la partita più recente del libro sorgente e crea
+  // una NUOVA partita sul libro scelto con Action Chart, zaino, oro e note.
+  // NON copia: segnalibri (sono del libro), posizione di lettura, registro di
+  // guerra e combattimento in corso (legati alle sezioni del libro originale).
+  const copyCharacter = async (source: BookRecord, target: BookRecord) => {
+    if (source.id == null || target.id == null) return
+    const src = await db.playthroughs
+      .where('bookId')
+      .equals(source.id)
+      .reverse()
+      .sortBy('updatedAt')
+      .then((a) => a[0])
+    if (!src) {
+      setCopyMsg(t('lib.copyNoSave', { title: source.title }))
+      setCopyFrom(null)
+      return
+    }
+    const existing = await db.playthroughs.where('bookId').equals(target.id).count()
+    const id = await db.playthroughs.add({
+      bookId: target.id,
+      name: t('lib.playthroughName', { n: existing + 1 }),
+      currentLocation: null,
+      actionChart: structuredClone(src.actionChart),
+      activeCombat: null,
+      warLog: [{ ts: Date.now(), type: 'note', text: t('lib.copyLogNote', { from: source.title }) }],
+      notes: src.notes ?? '',
+      updatedAt: Date.now(),
+    })
+    setCopyFrom(null)
+    setCopyMsg(null)
+    await openReader(target.id, id)
   }
 
   const removeBook = async (bookId: number) => {
@@ -115,6 +153,40 @@ export function Library({ persist }: { persist: PersistState }) {
         {books.length === 0 && (
           <p className="py-12 text-center text-sm text-[var(--color-ink)]/50">{t('lib.empty')}</p>
         )}
+
+        {/* Selettore del libro di DESTINAZIONE per la copia del personaggio. */}
+        {copyFrom && (
+          <div className="mb-3 rounded-xl border border-[var(--color-gold-dim)] bg-[var(--color-panel)] p-3">
+            <p className="font-semibold text-[var(--color-gold)]">
+              🧳 {t('lib.copyTo', { title: copyFrom.title })}
+            </p>
+            <p className="mt-1 text-xs text-[var(--color-ink)]/60">{t('lib.copyHint')}</p>
+            <ul className="mt-3 flex flex-col gap-2">
+              {books
+                .filter((b) => b.id !== copyFrom.id)
+                .map((b) => (
+                  <li key={b.id}>
+                    <button
+                      className="touch w-full truncate rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 py-2 text-left font-semibold text-[var(--color-ink)] active:bg-[var(--color-line)]"
+                      onClick={() => void copyCharacter(copyFrom, b)}
+                    >
+                      📖 {b.title}
+                    </button>
+                  </li>
+                ))}
+              {books.length < 2 && (
+                <li className="text-sm text-[var(--color-ink)]/50">{t('lib.copyNoTarget')}</li>
+              )}
+            </ul>
+            <button
+              className="touch mt-3 w-full rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 py-2 text-sm active:bg-[var(--color-line)]"
+              onClick={() => setCopyFrom(null)}
+            >
+              {t('lib.copyCancel')}
+            </button>
+          </div>
+        )}
+        {copyMsg && <p className="mb-3 text-xs text-[var(--color-gold-dim)]">{copyMsg}</p>}
         <ul className="flex flex-col gap-3">
           {books.map((b) => (
             <li
@@ -144,6 +216,20 @@ export function Library({ persist }: { persist: PersistState }) {
                   onClick={() => b.id != null && startNewGame(b.id)}
                 >
                   {t('lib.newGame')}
+                </button>
+                <button
+                  className={`touch rounded-lg border px-3 active:bg-[var(--color-line)] ${
+                    copyFrom?.id === b.id
+                      ? 'border-[var(--color-gold)] bg-[var(--color-line)]'
+                      : 'border-[var(--color-line)] bg-[var(--color-panel-2)]'
+                  }`}
+                  onClick={() => {
+                    setCopyMsg(null)
+                    setCopyFrom(copyFrom?.id === b.id ? null : b)
+                  }}
+                  aria-label={t('lib.copyChar', { title: b.title })}
+                >
+                  🧳
                 </button>
                 <button
                   className="touch rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 active:bg-[var(--color-line)]"

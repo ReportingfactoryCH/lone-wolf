@@ -9,7 +9,9 @@ import type { ActionChart as Chart } from '../../db'
 export function ActionChart({ onClose }: { onClose: () => void }) {
   const t = useT()
   const chart = useStore((s) => s.playthrough?.actionChart)
+  const notes = useStore((s) => s.playthrough?.notes ?? '')
   const setChart = useStore((s) => s.setActionChart)
+  const patchPlaythrough = useStore((s) => s.patchPlaythrough)
   if (!chart) return null
 
   const patch = (p: Partial<Chart>) => setChart({ ...chart, ...p })
@@ -71,6 +73,18 @@ export function ActionChart({ onClose }: { onClose: () => void }) {
           onChange={(kaiDisciplines) => patch({ kaiDisciplines })}
           addPlaceholder={t('chart.kaiPlaceholder')}
         />
+
+        {/* Note libere — persistite nel playthrough, incluse in export/import
+            e nella copia del personaggio su un altro libro. */}
+        <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]/60 p-3">
+          <h3 className="mb-2 font-semibold text-[var(--color-gold)]">📝 {t('chart.notes')}</h3>
+          <textarea
+            className="min-h-32 w-full resize-y rounded-lg border border-[var(--color-line)] bg-[var(--color-panel)] p-3 text-[var(--color-ink)]"
+            value={notes}
+            placeholder={t('chart.notesPlaceholder')}
+            onChange={(e) => patchPlaythrough({ notes: e.target.value }, { debounce: true })}
+          />
+        </section>
 
         <p className="text-center text-xs text-[var(--color-ink)]/50">{t('chart.itemsNote')}</p>
       </div>

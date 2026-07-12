@@ -7,14 +7,22 @@ import type { TKey } from '../../i18n'
 // Ogni sezione = icona + titolo + elenco puntato. La chiusura ribadisce il
 // principio di prodotto "l'utente è l'arbitro".
 const SECTIONS: { icon: string; title: TKey; bullets: TKey[] }[] = [
-  { icon: '📚', title: 'help.load.title', bullets: ['help.load.b1', 'help.load.b2', 'help.load.b3', 'help.load.b4'] },
+  {
+    icon: '📚',
+    title: 'help.load.title',
+    bullets: ['help.load.b1', 'help.load.b2', 'help.load.b3', 'help.load.b4', 'help.load.b5'],
+  },
   {
     icon: '📖',
     title: 'help.read.title',
     bullets: ['help.read.b1', 'help.read.b2', 'help.read.b3', 'help.read.b4', 'help.read.b5'],
   },
   { icon: '🧭', title: 'help.goto.title', bullets: ['help.goto.b1', 'help.goto.b2'] },
-  { icon: '📋', title: 'help.chart.title', bullets: ['help.chart.b1', 'help.chart.b2', 'help.chart.b3'] },
+  {
+    icon: '📋',
+    title: 'help.chart.title',
+    bullets: ['help.chart.b1', 'help.chart.b2', 'help.chart.b3', 'help.chart.b4'],
+  },
   { icon: '🎒', title: 'help.inv.title', bullets: ['help.inv.b1', 'help.inv.b2'] },
   { icon: '🎲', title: 'help.num.title', bullets: ['help.num.b1'] },
   {

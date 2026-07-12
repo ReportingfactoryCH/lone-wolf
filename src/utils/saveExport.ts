@@ -1,13 +1,14 @@
-import { db, type Playthrough } from '../db'
+import { db, type Playthrough, type Bookmark } from '../db'
 
 // ---------------------------------------------------------------------------
 // Export/Import JSON dei salvataggi — rete di sicurezza contro l'eviction iOS.
-// Esportiamo lo stato di gioco (Action Chart, war log, combattimento, location).
+// Esportiamo lo stato di gioco (Action Chart, war log, combattimento, location,
+// note libere) più i SEGNALIBRI del libro (che vivono sul BookRecord).
 // NON includiamo il blob EPUB: è pesante e l'utente lo ricarica dalla libreria.
 // ---------------------------------------------------------------------------
 
 const FORMAT = 'lupo-solitario-save'
-const VERSION = 1
+const VERSION = 2 // v2: + notes del playthrough, + bookmarks del libro
 
 interface SaveFile {
   format: typeof FORMAT
@@ -15,6 +16,29 @@ interface SaveFile {
   exportedAt: number
   bookTitle?: string
   playthrough: Omit<Playthrough, 'id'>
+  // Segnalibri del LIBRO al momento dell'export (assente nei file v1).
+  bookmarks?: Bookmark[]
+}
+
+/**
+ * Unione di segnalibri esistenti + importati, senza duplicati: un segnalibro
+ * incoming è scartato se esiste già lo stesso id oppure la stessa coppia
+ * cfi+label (re-import dello stesso file → nessun doppione).
+ */
+function mergeBookmarks(existing: Bookmark[] | undefined, incoming: Bookmark[] | undefined): Bookmark[] {
+  const cur = existing ?? []
+  const seenId = new Set(cur.map((b) => b.id))
+  const seenPos = new Set(cur.map((b) => `${b.cfi}|${b.label}`))
+  const merged = [...cur]
+  for (const b of incoming ?? []) {
+    if (!b || typeof b.cfi !== 'string' || !b.cfi) continue
+    const pos = `${b.cfi}|${b.label}`
+    if (seenId.has(b.id) || seenPos.has(pos)) continue
+    merged.push(b)
+    seenId.add(b.id)
+    seenPos.add(pos)
+  }
+  return merged
 }
 
 export async function exportPlaythrough(p: Playthrough): Promise<void> {
@@ -31,8 +55,10 @@ export async function exportPlaythrough(p: Playthrough): Promise<void> {
       actionChart: p.actionChart,
       activeCombat: p.activeCombat,
       warLog: p.warLog,
+      notes: p.notes ?? '',
       updatedAt: p.updatedAt,
     },
+    bookmarks: book?.bookmarks ?? [],
   }
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
@@ -83,15 +109,24 @@ export async function importPlaythrough(file: File): Promise<ImportResult> {
     actionChart: pt.actionChart,
     activeCombat: pt.activeCombat ?? null,
     warLog: pt.warLog ?? [],
+    notes: pt.notes ?? '',
     updatedAt: Date.now(),
   })
+
+  // Segnalibri: si ri-applicano SOLO se il libro originale è presente
+  // (agganciare i segnalibri di un altro libro al fallback sarebbe sbagliato).
+  if (bookKnown && data.bookmarks?.length) {
+    const book = await db.books.get(bookId)
+    if (book) await db.books.update(bookId, { bookmarks: mergeBookmarks(book.bookmarks, data.bookmarks) })
+  }
 
   return { newPlaythroughId: id, bookId, bookKnown }
 }
 
 // ---------------------------------------------------------------------------
-// Backup COMPLETO — tutti i playthrough di tutti i libri, in un solo file.
-// NON include gli EPUB (pesanti, ricaricabili dalla libreria).
+// Backup COMPLETO — tutti i playthrough di tutti i libri (+ i segnalibri di
+// ogni libro), in un solo file. NON include gli EPUB (pesanti, ricaricabili
+// dalla libreria).
 //
 // Il bookId numerico è un auto-increment LOCALE di IndexedDB: non è portabile
 // tra dispositivi / reinstallazioni. Perciò salviamo il TITOLO del libro e, al
@@ -101,7 +136,7 @@ export async function importPlaythrough(file: File): Promise<ImportResult> {
 // ---------------------------------------------------------------------------
 
 const BACKUP_FORMAT = 'lupo-solitario-backup'
-const BACKUP_VERSION = 1
+const BACKUP_VERSION = 2 // v2: + notes dei playthrough, + books[] coi segnalibri
 
 interface BackupEntry {
   bookTitle: string // chiave di ri-aggancio (il bookId numerico non è portabile)
@@ -110,7 +145,15 @@ interface BackupEntry {
   actionChart: Playthrough['actionChart']
   activeCombat: Playthrough['activeCombat']
   warLog: Playthrough['warLog']
+  notes?: string
   updatedAt: number
+}
+
+// Segnalibri per libro (sono del BookRecord, non del playthrough): stessa
+// chiave di ri-aggancio per titolo. Assente nei backup v1.
+interface BackupBookEntry {
+  title: string
+  bookmarks: Bookmark[]
 }
 
 interface BackupFile {
@@ -118,6 +161,7 @@ interface BackupFile {
   version: number
   exportedAt: number
   playthroughs: BackupEntry[]
+  books?: BackupBookEntry[]
 }
 
 export async function exportAllPlaythroughs(): Promise<number> {
@@ -138,8 +182,12 @@ export async function exportAllPlaythroughs(): Promise<number> {
       actionChart: p.actionChart,
       activeCombat: p.activeCombat,
       warLog: p.warLog,
+      notes: p.notes ?? '',
       updatedAt: p.updatedAt,
     })),
+    books: books
+      .filter((b) => (b.bookmarks?.length ?? 0) > 0)
+      .map((b) => ({ title: b.title, bookmarks: b.bookmarks! })),
   }
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
@@ -178,7 +226,7 @@ export async function importAllPlaythroughs(file: File): Promise<BackupImportRes
   let linked = 0
   const missing = new Set<string>()
 
-  await db.transaction('rw', db.playthroughs, async () => {
+  await db.transaction('rw', db.playthroughs, db.books, db.pendingBookmarks, async () => {
     for (const e of data.playthroughs!) {
       const bookId = e.bookTitle ? idByTitle.get(e.bookTitle) : undefined
       const isLinked = bookId != null
@@ -191,9 +239,28 @@ export async function importAllPlaythroughs(file: File): Promise<BackupImportRes
         actionChart: e.actionChart,
         activeCombat: e.activeCombat ?? null,
         warLog: e.warLog ?? [],
+        notes: e.notes ?? '',
         updatedAt: e.updatedAt ?? Date.now(),
         ...(isLinked ? {} : { orphanBookTitle: e.bookTitle }),
       })
+    }
+
+    // Segnalibri per libro: merge nel libro presente, altrimenti "parcheggio"
+    // in pendingBookmarks (applicati appena l'EPUB con quel titolo viene caricato).
+    for (const be of data.books ?? []) {
+      if (!be?.title || !Array.isArray(be.bookmarks) || be.bookmarks.length === 0) continue
+      const bookId = idByTitle.get(be.title)
+      if (bookId != null) {
+        const book = await db.books.get(bookId)
+        if (book) await db.books.update(bookId, { bookmarks: mergeBookmarks(book.bookmarks, be.bookmarks) })
+      } else {
+        const pending = await db.pendingBookmarks.get(be.title)
+        await db.pendingBookmarks.put({
+          title: be.title,
+          bookmarks: mergeBookmarks(pending?.bookmarks, be.bookmarks),
+        })
+        missing.add(be.title)
+      }
     }
   })
 
@@ -221,4 +288,21 @@ export async function relinkOrphanPlaythroughs(bookId: number, title: string): P
     }
   })
   return orphans.length
+}
+
+/**
+ * Applica al libro appena caricato i segnalibri rimasti "parcheggiati" da un
+ * import di backup (il libro non era ancora in libreria). Da chiamare dopo
+ * aver aggiunto un EPUB, insieme a relinkOrphanPlaythroughs.
+ * Ritorna quanti segnalibri sono stati applicati.
+ */
+export async function applyPendingBookmarks(bookId: number, title: string): Promise<number> {
+  const pending = await db.pendingBookmarks.get(title)
+  if (!pending?.bookmarks?.length) return 0
+  await db.transaction('rw', db.books, db.pendingBookmarks, async () => {
+    const book = await db.books.get(bookId)
+    if (book) await db.books.update(bookId, { bookmarks: mergeBookmarks(book.bookmarks, pending.bookmarks) })
+    await db.pendingBookmarks.delete(title)
+  })
+  return pending.bookmarks.length
 }

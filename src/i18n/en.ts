@@ -43,6 +43,14 @@ export const en = {
     'Start a new game?\n\nPrevious saves for this book will be deleted. If you want to keep them, export them first from the Log.',
   'lib.playthroughName': 'Game {n}',
   'lib.settings': 'Settings',
+  'lib.copyChar': 'Copy the character from “{title}” to another book',
+  'lib.copyTo': 'Copy the character from “{title}” to:',
+  'lib.copyHint':
+    'Creates a new game on the chosen book with the Action Chart, backpack, gold and notes of the most recent game. Bookmarks, reading position and war log stay with the original book.',
+  'lib.copyNoTarget': 'Load the next book into the library first: the character is copied onto a different book.',
+  'lib.copyNoSave': 'No saved game to copy for “{title}”.',
+  'lib.copyCancel': 'Cancel',
+  'lib.copyLogNote': 'Character copied from “{from}”.',
 
   // Instructions / help
   'help.button': 'Guide',
@@ -54,6 +62,8 @@ export const en = {
   'help.load.b3':
     '“Open” resumes your last game; “New game” starts over and deletes that book’s saves — export them first if you want to keep them.',
   'help.load.b4': 'The Lone Wolf gamebooks are available for free from Project Aon.',
+  'help.load.b5':
+    'Finished a book? Tap 🧳 on it to copy your character (chart, backpack, gold and notes) into a new game on the next book. Bookmarks and war log stay with the original book.',
   'help.read.title': 'Reading & navigating',
   'help.read.b1': 'Your reading position is saved automatically as you read.',
   'help.read.b2': 'Use A− / A+ at the top to change text size; switch the dark/light theme in Settings.',
@@ -68,6 +78,8 @@ export const en = {
   'help.chart.b1': 'Initial Combat Skill is 10–19 and initial Endurance 20–29 (10/20 plus a drawn digit 0–9).',
   'help.chart.b2': 'Every value is always editable by hand — even mid-combat (e.g. add points after a potion).',
   'help.chart.b3': 'The classic limits are only hints: the app never stops you from entering a value.',
+  'help.chart.b4':
+    'At the bottom of the chart there is a free Notes area (clues, codes, reminders): it is saved with the game, included in backups and copied along with the character.',
   'help.inv.title': 'Backpack & items',
   'help.inv.b1':
     'Weapons (ref. max 2), Backpack (ref. max 8), Special Items (no limit), Gold Crowns (ref. max 50) and Meals.',
@@ -96,7 +108,7 @@ export const en = {
   'help.backup.title': 'Settings & backup',
   'help.backup.b1': 'Change the interface language and the light/dark theme.',
   'help.backup.b2':
-    'Export your saves to a JSON file as a safety net (iOS can evict data), and re-import them anytime.',
+    'Export your saves to a JSON file as a safety net (iOS can evict data), and re-import them anytime. Bookmarks and notes are included.',
   'help.backup.b3': 'EPUBs aren’t in the backup: reload them and the saves re-link by book title.',
   'help.principle.title': 'You are the referee',
   'help.principle.body':
@@ -114,7 +126,7 @@ export const en = {
   'settings.themeLight': 'Light',
   'settings.backup': 'Saves backup',
   'settings.backupHint':
-    'Exports every save (all games, all books) to one file. EPUBs are not included: reload them from the library and saves re-link by book title.',
+    'Exports every save (all games, all books) to one file, bookmarks and notes included. EPUBs are not included: reload them from the library and saves re-link by book title.',
   'settings.export': '⬇︎ Export all saves',
   'settings.import': '⬆︎ Import saves',
   'settings.exportDone': '{n} saves exported.',
@@ -156,6 +168,8 @@ export const en = {
   'chart.enduranceCritical': '≤ 0 — critical situation (your call)',
   'chart.kai': 'Kai Disciplines',
   'chart.kaiPlaceholder': 'e.g. Camouflage, Sixth Sense…',
+  'chart.notes': 'Notes',
+  'chart.notesPlaceholder': 'Free notes… (e.g. clues, codes, things to remember)',
   'chart.itemsNote': 'Weapons, backpack, special items and gold are managed in the 🎒 Backpack panel.',
 
   // Inventory

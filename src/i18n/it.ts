@@ -44,6 +44,14 @@ export const it: Record<keyof typeof en, string> = {
     'Iniziare una nuova partita?\n\nI salvataggi precedenti di questo libro verranno cancellati. Se vuoi conservarli, esportali prima dal Registro.',
   'lib.playthroughName': 'Partita {n}',
   'lib.settings': 'Impostazioni',
+  'lib.copyChar': 'Copia il personaggio di «{title}» su un altro libro',
+  'lib.copyTo': 'Copia il personaggio di «{title}» su:',
+  'lib.copyHint':
+    'Crea una nuova partita sul libro scelto con Action Chart, zaino, oro e note della partita più recente. Segnalibri, posizione di lettura e registro di guerra restano sul libro originale.',
+  'lib.copyNoTarget': 'Carica prima il libro successivo in libreria: il personaggio si copia su un libro diverso.',
+  'lib.copyNoSave': 'Nessuna partita da copiare per «{title}».',
+  'lib.copyCancel': 'Annulla',
+  'lib.copyLogNote': 'Personaggio copiato da «{from}».',
 
   // Istruzioni / guida
   'help.button': 'Istruzioni',
@@ -55,6 +63,8 @@ export const it: Record<keyof typeof en, string> = {
   'help.load.b3':
     '“Apri” riprende l’ultima partita; “Nuova partita” ricomincia da zero e cancella i salvataggi di quel libro — esportali prima se vuoi conservarli.',
   'help.load.b4': 'I gamebook di Lupo Solitario si scaricano gratis da Project Aon.',
+  'help.load.b5':
+    'Finito un libro? Tocca 🧳 sul libro per copiare il personaggio (scheda, zaino, oro e note) in una nuova partita sul libro successivo. Segnalibri e registro di guerra restano sul libro originale.',
   'help.read.title': 'Leggere e navigare',
   'help.read.b1': 'La posizione di lettura viene salvata automaticamente mentre leggi.',
   'help.read.b2': 'Usa A− / A+ in alto per la dimensione del testo; cambia tema scuro/chiaro dalle Impostazioni.',
@@ -72,6 +82,8 @@ export const it: Record<keyof typeof en, string> = {
   'help.chart.b2':
     'Ogni valore è sempre modificabile a mano — anche a metà combattimento (es. aggiungi punti dopo una pozione).',
   'help.chart.b3': 'I limiti classici sono solo avvisi: l’app non ti impedisce mai di inserire un valore.',
+  'help.chart.b4':
+    'In fondo alla scheda c’è uno spazio Note libere (indizi, codici, promemoria): si salva con la partita, è incluso nei backup e viene copiato insieme al personaggio.',
   'help.inv.title': 'Zaino e oggetti',
   'help.inv.b1':
     'Armi (rif. max 2), Zaino (rif. max 8), Oggetti speciali (senza limite), Corone d’oro (rif. max 50) e Pasti.',
@@ -102,7 +114,7 @@ export const it: Record<keyof typeof en, string> = {
   'help.backup.title': 'Impostazioni e backup',
   'help.backup.b1': 'Cambia la lingua dell’interfaccia e il tema chiaro/scuro.',
   'help.backup.b2':
-    'Esporta i salvataggi in un file JSON come rete di sicurezza (iOS può cancellare i dati) e reimportali quando vuoi.',
+    'Esporta i salvataggi in un file JSON come rete di sicurezza (iOS può cancellare i dati) e reimportali quando vuoi. Segnalibri e note sono inclusi.',
   'help.backup.b3': 'Gli EPUB non sono nel backup: ricaricali e i salvataggi si ri-agganciano per titolo del libro.',
   'help.principle.title': 'Sei tu l’arbitro',
   'help.principle.body':
@@ -120,7 +132,7 @@ export const it: Record<keyof typeof en, string> = {
   'settings.themeLight': 'Chiaro',
   'settings.backup': 'Backup salvataggi',
   'settings.backupHint':
-    'Esporta tutti i salvataggi (tutte le partite, tutti i libri) in un unico file. Gli EPUB non sono inclusi: ricaricali dalla libreria e i salvataggi si ri-agganciano per titolo del libro.',
+    'Esporta tutti i salvataggi (tutte le partite, tutti i libri) in un unico file, segnalibri e note inclusi. Gli EPUB non sono inclusi: ricaricali dalla libreria e i salvataggi si ri-agganciano per titolo del libro.',
   'settings.export': '⬇︎ Esporta tutti i salvataggi',
   'settings.import': '⬆︎ Importa salvataggi',
   'settings.exportDone': 'Esportati {n} salvataggi.',
@@ -162,6 +174,8 @@ export const it: Record<keyof typeof en, string> = {
   'chart.enduranceCritical': '≤ 0 — situazione critica (decidi tu)',
   'chart.kai': 'Discipline Kai',
   'chart.kaiPlaceholder': 'es. Mimetismo, Sesto Senso…',
+  'chart.notes': 'Note',
+  'chart.notesPlaceholder': 'Note libere… (es. indizi, codici, cose da ricordare)',
   'chart.itemsNote': 'Armi, zaino, oggetti speciali e oro si gestiscono nel pannello 🎒 Zaino.',
 
   // Inventory
