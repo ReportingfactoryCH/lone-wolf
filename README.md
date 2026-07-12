@@ -9,6 +9,20 @@ on the home screen, fully functional with no network.
 > **Unofficial fan project** — not affiliated with, or endorsed by, the estate of
 > Joe Dever or Project Aon. See [Legal](#legal--lone-wolf-and-project-aon) below.
 
+## ▶️ Try it online
+
+**The app is live at [lw.ingalbertoplebani.it](https://lw.ingalbertoplebani.it)** —
+this is the quickest way to try it: no local setup or deploy needed. It is
+mobile friendly and **installable as a PWA** (on iPhone: Safari → Share →
+*Add to Home Screen*; on Android: *Install app*). Once opened, it keeps working
+fully **offline**. Grab an EPUB from [Project Aon](https://www.projectaon.org),
+load it, and start playing.
+
+- **Languages:** English and Italian (the interface follows your device
+  language and can be switched in Settings).
+- **Built-in help:** the ❓ *Guide* button in the library explains every
+  feature (reader, Action Chart, combat helper, backups…).
+
 Stack: **Vite + React + TypeScript**, **Tailwind v4**, **react-reader (EpubView)**,
 **Dexie** (IndexedDB), **Zustand**, **vite-plugin-pwa** (Workbox).
 
