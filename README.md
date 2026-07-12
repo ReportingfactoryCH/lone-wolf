@@ -15,8 +15,13 @@ on the home screen, fully functional with no network.
 this is the quickest way to try it: no local setup or deploy needed. It is
 mobile friendly and **installable as a PWA** (on iPhone: Safari → Share →
 *Add to Home Screen*; on Android: *Install app*). Once opened, it keeps working
-fully **offline**. Grab an EPUB from [Project Aon](https://www.projectaon.org),
-load it, and start playing.
+fully **offline**.
+
+> ⚠️ **You need the gamebooks in EPUB format.** The app is only a reader/companion
+> and ships with **no book content**: to play you must load the *Lone Wolf*
+> gamebooks as `.epub` files. The English editions can be downloaded **for free
+> and legally** from [Project Aon](https://www.projectaon.org). Download the
+> EPUB to your device, then load it from the app's library.
 
 - **Languages:** English and Italian (the interface follows your device
   language and can be switched in Settings).
