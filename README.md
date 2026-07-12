@@ -31,9 +31,13 @@ fully **offline**.
 Stack: **Vite + React + TypeScript**, **Tailwind v4**, **react-reader (EpubView)**,
 **Dexie** (IndexedDB), **Zustand**, **vite-plugin-pwa** (Workbox).
 
-| Library | Reader |
+| Library | Reader | Combat helper |
+| --- | --- | --- |
+| ![Library](screenshots/library.png) | ![Reader](screenshots/reader.png) | ![Combat helper](screenshots/combat.png) |
+
+| Action Chart | Backpack |
 | --- | --- |
-| ![Library](library.png) | ![Reader](reader.png) |
+| ![Action Chart](screenshots/action-chart.png) | ![Backpack](screenshots/backpack.png) |
 
 ---
 
