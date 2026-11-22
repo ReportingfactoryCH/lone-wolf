@@ -11,7 +11,14 @@ const buildId = new Date().toISOString().slice(0, 16).replace('T', ' ')
 // Tailwind v4 via plugin ufficiale (@tailwindcss/vite) — NIENTE config PostCSS v3.
 // vite-plugin-pwa con registerType autoUpdate: precache di tutta l'app shell.
 // Nessuna risorsa da CDN: tutto è bundlato per garantire il funzionamento offline.
+// Percorso base dell'app. '/' per dev, Docker e host alla radice; per GitHub
+// Pages (https://<utente>.github.io/<repo>/) il workflow imposta BASE_PATH=/<repo>/.
+// (Letto da globalThis per non richiedere @types/node solo per questa riga.)
+const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env
+const base = env?.BASE_PATH || '/'
+
 export default defineConfig({
+  base,
   define: {
     __BUILD_ID__: JSON.stringify(buildId),
   },

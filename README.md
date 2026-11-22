@@ -96,6 +96,21 @@ two options:
    publish the contents of `dist/`. A `Dockerfile` (nginx, PWA-aware cache
    headers) is also included for self-hosting.
 
+### GitHub Pages (automatic)
+
+The workflow `.github/workflows/deploy-pages.yml` builds the app and publishes
+it on every push to `main` (it can also be started by hand from the Actions
+tab). One-time setup: **Settings → Pages → Source: GitHub Actions**. The app is
+then served at `https://<owner>.github.io/<repo>/`.
+
+Builds for a sub-path set `BASE_PATH` (the workflow does this for you):
+
+```bash
+BASE_PATH=/lone-wolf/ npm run build
+```
+
+Without `BASE_PATH` the app is built for the site root (`/`), as before.
+
 ### Add to Home Screen (install the PWA)
 
 On iPhone, in **Safari**: open the site → **Share** → **Add to Home Screen**.
