@@ -10,10 +10,10 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
-    <meta name="theme-color" content="#1a1206" />
+    <meta name="theme-color" content="#FFFFFF" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Kai-Chronik" />
+    <meta name="apple-mobile-web-app-title" content="Spielbuch" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <!-- Splash screen native iOS (PWA installata): iOS mostra queste immagini
          durante il cold start, prima ancora del primo paint dell'HTML. Ogni tag
@@ -36,7 +36,7 @@
     <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/splash/ios/apple-splash-1668-2388.jpg" />
     <link rel="apple-touch-startup-image" media="(device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/splash/ios/apple-splash-1640-2360.jpg" />
     <link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/splash/ios/apple-splash-1536-2048.jpg" />
-    <title>Kai-Chronik</title>
+    <title>Spielbuch</title>
     <!-- Splash inline: si dipinge immediatamente col primo paint dell'HTML (prima
          che il bundle JS venga scaricato/eseguito), coprendo il gap di avvio anche
          da PWA installata su iOS. Rimosso da main.tsx quando l'app è montata.
@@ -50,11 +50,11 @@
         position: fixed;
         inset: 0;
         z-index: 9999;
-        background-color: #0b0e18;
-        background-image: url("/splash/splash-web.jpg");
+        background-color: #FFFFFF;
+        background-image: url("./rf-logo.svg");
         background-repeat: no-repeat;
         background-position: center center;
-        background-size: contain;
+        background-size: 180px auto;
         transition: opacity 0.4s ease;
       }
       #splash.splash--hide {
@@ -64,7 +64,7 @@
     </style>
   </head>
   <body>
-    <div id="splash" role="status" aria-label="Kai-Chronik"></div>
+    <div id="splash" role="status" aria-label="Spielbuch"></div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -295,7 +295,7 @@ export const de = {
 
   // Orientation gate
   'orient.rotate': 'Bitte ins Hochformat drehen',
-  'orient.hint': 'Die Kai-Chronik ist für das Hochformat gedacht.',
+  'orient.hint': 'Spielbuch ist für das Hochformat gedacht.',
 
   // Lightbox
   'box.zoomOut': 'Verkleinern',

@@ -45,14 +45,14 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
       },
       manifest: {
-        name: 'Kai-Chronik',
-        short_name: 'Kai-Chronik',
+        name: 'Spielbuch',
+        short_name: 'Spielbuch',
         description: 'Offline-Begleiter für Spielbücher: Leser, Aktionsblatt, Kampf und Protokoll',
         lang: 'de',
         display: 'standalone',
         orientation: 'portrait',
-        theme_color: '#1a1206',
-        background_color: '#1a1206',
+        theme_color: '#FFFFFF',
+        background_color: '#FFFFFF',
         start_url: '.',
         scope: '.',
         icons: [

@@ -1,12 +1,37 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { registerSW } from 'virtual:pwa-register'
+import '@fontsource/montserrat/400.css'
+import '@fontsource/montserrat/600.css'
+import '@fontsource/montserrat/700.css'
 import './index.css'
 import App from './App'
 import { OrientationGate } from './components/OrientationGate'
+import { useStore } from './store'
+import { goBack } from './utils/readerControl'
 
-// Service worker (offline-first).
-if (import.meta.env.DEV) {
+// Android-App (WebView): die Zurück-Taste des Telefons ruft diese Funktion auf.
+// Reihenfolge: Bild schliessen → Panel schliessen → im Leseverlauf zurück →
+// zur Bibliothek. Gibt false zurück, wenn nichts mehr zu tun ist (App schliesst).
+;(window as unknown as { spielbuchBack: () => Promise<boolean> }).spielbuchBack = async () => {
+  const s = useStore.getState()
+  if (s.lightboxSrc) { s.closeLightbox(); return true }
+  if (s.openPanel) { s.setPanel(null); return true }
+  if (s.view === 'reader') {
+    if (await goBack()) return true
+    s.goLibrary()
+    return true
+  }
+  return false
+}
+
+const isAndroidApp = import.meta.env.VITE_ANDROID === '1'
+
+// Service worker (offline-first). In der Android-App unnötig: dort liegen alle
+// Dateien bereits lokal im APK.
+if (isAndroidApp) {
+  // nichts zu tun
+} else if (import.meta.env.DEV) {
   // In DEV il service worker NON viene rigenerato. Se ne è rimasto uno da un
   // precedente `npm run preview` (stessa origin localhost:4200), continuerebbe a
   // servire la build cachata e non vedremmo MAI i cambiamenti del dev server.

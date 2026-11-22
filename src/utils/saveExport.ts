@@ -60,10 +60,11 @@ export async function exportPlaythrough(p: Playthrough): Promise<void> {
     },
     bookmarks: book?.bookmarks ?? [],
   }
+  const safeName = (p.name || 'partita').replace(/[^\w.-]+/g, '_')
+  if (saveViaAndroid(`${safeName}.lupo.json`, payload)) return
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
-  const safeName = (p.name || 'partita').replace(/[^\w.-]+/g, '_')
   a.href = url
   a.download = `${safeName}.lupo.json`
   document.body.appendChild(a)
@@ -189,6 +190,7 @@ export async function exportAllPlaythroughs(): Promise<number> {
       .filter((b) => (b.bookmarks?.length ?? 0) > 0)
       .map((b) => ({ title: b.title, bookmarks: b.bookmarks! })),
   }
+  if (saveViaAndroid('spielbuch-spielstaende.json', payload)) return payload.playthroughs.length
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -305,4 +307,15 @@ export async function applyPendingBookmarks(bookId: number, title: string): Prom
     await db.pendingBookmarks.delete(title)
   })
   return pending.bookmarks.length
+}
+
+// Android-App (WebView): Downloads über blob-URLs funktionieren dort nicht.
+// Die App stellt deshalb window.SpielbuchAndroid.saveFile bereit, das den
+// Android-Dialog "Speichern unter" öffnet. Im Browser bleibt alles wie bisher.
+function saveViaAndroid(fileName: string, payload: unknown): boolean {
+  const bridge = (window as unknown as { SpielbuchAndroid?: { saveFile: (n: string, c: string) => void } })
+    .SpielbuchAndroid
+  if (!bridge) return false
+  bridge.saveFile(fileName, JSON.stringify(payload, null, 2))
+  return true
 }

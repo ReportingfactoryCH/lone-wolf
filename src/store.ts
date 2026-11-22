@@ -64,9 +64,9 @@ const LS_FONT = 'lupo-font'
 function loadDark(): boolean {
   try {
     const v = localStorage.getItem(LS_DARK)
-    return v == null ? true : v === '1'
+    return v == null ? false : v === '1'
   } catch {
-    return true
+    return false
   }
 }
 

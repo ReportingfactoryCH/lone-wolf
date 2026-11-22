@@ -1,19 +1,21 @@
 @import "tailwindcss";
 
-/* Tema "pergamena scura" data-driven via CSS variables. */
+/* Spielbuch: helles, schlankes Design in den Farben von Reporting Factory.
+   Die Variablennamen stammen aus dem Original-Theme und bleiben gleich:
+   gold = Akzent Orange, gold-dim = Dunkelblau, blood = Warnrot. */
 @theme {
-  --color-ink: #e8ddc7;
-  --color-parchment: #1a1206;
-  --color-panel: #241a0c;
-  --color-panel-2: #2f2310;
-  --color-gold: #c9a24c;
-  --color-gold-dim: #9a7c3a;
-  --color-blood: #8a2b2b;
-  --color-line: #3a2c14;
+  --color-ink: #4A4949;
+  --color-parchment: #FFFFFF;
+  --color-panel: #FFFFFF;
+  --color-panel-2: #F5F5F5;
+  --color-gold: #EA922D;
+  --color-gold-dim: #1B346B;
+  --color-blood: #B3261E;
+  --color-line: #E4E4E4;
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   /* Altezza viewport dinamica: niente 100vh su iOS (la barra Safari fa "saltare"). */
   --app-h: 100dvh;
 }
@@ -23,7 +25,7 @@ html, body, #root {
   height: 100%;
   background: var(--color-parchment);
   color: var(--color-ink);
-  font-family: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-family: Montserrat, Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 

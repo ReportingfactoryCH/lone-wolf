@@ -6,6 +6,7 @@ import type { PersistState } from '../hooks/usePersistence'
 import { useT } from '../i18n/useT'
 import { LOCALES } from '../i18n'
 import { applyPendingBookmarks, relinkOrphanPlaythroughs } from '../utils/saveExport'
+import rfLogo from '../assets/reportingfactory-logo.svg'
 
 // Schermata iniziale: libreria dei libri salvati in IndexedDB + caricamento EPUB.
 export function Library({ persist }: { persist: PersistState }) {
@@ -100,14 +101,18 @@ export function Library({ persist }: { persist: PersistState }) {
     })
   }
 
-  const persistNote =
+  // In der Android-App liegen die Daten im App-Speicher: der iOS-Hinweis entfällt.
+  const persistNote = import.meta.env.VITE_ANDROID === '1' ? null :
     persist === 'denied' ? t('lib.persistDenied') : persist === 'granted' ? t('lib.persistGranted') : null
 
   return (
     <div className="min-h-app flex flex-col pt-safe pb-safe">
       <header className="px-4 pt-4">
         <div className="flex items-start justify-between gap-2">
-          <h1 className="text-2xl font-bold text-[var(--color-gold)]">Kai-Chronik</h1>
+          <div>
+            <img src={rfLogo} alt="Reporting Factory" className="mb-2 h-10 w-auto" />
+            <h1 className="text-2xl font-bold text-[var(--color-gold-dim)]">Spielbuch</h1>
+          </div>
           <div className="flex shrink-0 items-center gap-2">
             <button
               className="touch flex items-center justify-center gap-1 rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 text-sm font-semibold text-[var(--color-ink)] active:bg-[var(--color-line)]"

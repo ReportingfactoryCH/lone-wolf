@@ -33,8 +33,8 @@ export interface ReaderProps {
 }
 
 function applyTheme(rendition: Rendition, dark: boolean, fontSize: number) {
-  const ink = dark ? '#e8ddc7' : '#1a1206'
-  const bg = dark ? '#1a1206' : '#f4ecd8'
+  const ink = dark ? '#E6E6E6' : '#4A4949'
+  const bg = dark ? '#1F1F1F' : '#FFFFFF'
   rendition.themes.register('lupo', {
     body: {
       color: ink,
@@ -44,8 +44,8 @@ function applyTheme(rendition: Rendition, dark: boolean, fontSize: number) {
       'line-height': '1.6',
       'overscroll-behavior': 'contain',
     },
-    a: { color: dark ? '#c9a24c' : '#8a5a12' },
-    'a:link': { color: dark ? '#c9a24c' : '#8a5a12' },
+    a: { color: '#EA922D' },
+    'a:link': { color: '#EA922D' },
     p: { 'margin-top': '0.6em', 'margin-bottom': '0.6em' },
   })
   rendition.themes.select('lupo')

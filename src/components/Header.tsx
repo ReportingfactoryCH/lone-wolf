@@ -77,7 +77,7 @@ export function BottomBar() {
     // piena e distinta; clearance home-indicator ridotta (env - 10px) per non
     // renderla troppo alta, tenendo le icone sopra l'indicatore.
     <nav
-      className="shrink-0 border-t border-[var(--color-line)] bg-[var(--color-panel-2)] shadow-[0_-6px_16px_rgba(0,0,0,0.45)]"
+      className="shrink-0 border-t border-[var(--color-line)] bg-[var(--color-panel-2)] shadow-[0_-2px_8px_rgba(0,0,0,0.06)]"
       style={{ paddingBottom: 'max(calc(env(safe-area-inset-bottom) - 10px), 6px)' }}
     >
       <div className="grid grid-cols-5 gap-1 px-1 py-0.5">
