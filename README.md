@@ -23,8 +23,8 @@ fully **offline**.
 > and legally** from [Project Aon](https://www.projectaon.org). Download the
 > EPUB to your device, then load it from the app's library.
 
-- **Languages:** English, Italian and German (the interface follows your device
-  language and can be switched in Settings).
+- **Language:** this fork (*Kai-Chronik*) has a German-only interface. The
+  i18n structure (`src/i18n/`) is kept, so languages can be added back later.
 - **Section navigation** works with Project Aon EPUBs (one `sectN` file per
   section) and with EPUBs that keep many numbered sections in one file, such as
   the German *Einsamer Wolf* edition: sections are found by their number-only
@@ -164,7 +164,7 @@ src/
   store.ts              # global state (Zustand) + persistence to Dexie
   data/crt.ts           # Combat Results Table (values from Project Aon)
   data/disciplines.ts   # Kai Disciplines
-  i18n/                 # UI dictionaries (English + Italian + German)
+  i18n/                 # UI dictionary (German)
   components/
     Library.tsx         # library + EPUB loading + copy character between books
     Reader.tsx          # EpubView wrapper, MEMOIZED (stable iframe)

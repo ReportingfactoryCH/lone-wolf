@@ -107,7 +107,7 @@ export function Library({ persist }: { persist: PersistState }) {
     <div className="min-h-app flex flex-col pt-safe pb-safe">
       <header className="px-4 pt-4">
         <div className="flex items-start justify-between gap-2">
-          <h1 className="text-2xl font-bold text-[var(--color-gold)]">Lupo Solitario</h1>
+          <h1 className="text-2xl font-bold text-[var(--color-gold)]">Kai-Chronik</h1>
           <div className="flex shrink-0 items-center gap-2">
             <button
               className="touch flex items-center justify-center gap-1 rounded-lg border border-[var(--color-line)] bg-[var(--color-panel-2)] px-3 text-sm font-semibold text-[var(--color-ink)] active:bg-[var(--color-line)]"

@@ -1,10 +1,8 @@
-import type { en } from './en'
-
-// Deutsches Wörterbuch. Typisiert auf `keyof typeof en` → Kompilierfehler,
-// wenn ein Schlüssel fehlt (oder zu viel ist) im Vergleich zum Englischen.
+// Wörterbuch der Oberfläche (die App ist nur auf Deutsch). Die Schlüssel dieses
+// Objekts sind die Menge aller Texte (TKey); Platzhalter in {geschweiften} Klammern.
 // Begriffe nach der deutschen Ausgabe „Einsamer Wolf“: Kampfstärke (KS),
 // Ausdauer, Kai-Disziplinen, Aktionsblatt, Goldkronen, Kampfverhältnis (KV).
-export const de: Record<keyof typeof en, string> = {
+export const de = {
   // Common
   'common.close': 'Schließen',
   'common.add': 'Hinzufügen',
@@ -117,7 +115,7 @@ export const de: Record<keyof typeof en, string> = {
   'help.warlog.b1': 'Ein chronologisches Tagebuch: Abschnittssprünge, gezogene Zahlen, Kampfrunden und deine eigenen Notizen.',
   'help.warlog.b2': 'Tippe auf einen Navigationseintrag, um zu dieser Stelle zurückzuspringen; Notizen kannst du jederzeit hinzufügen.',
   'help.backup.title': 'Einstellungen & Sicherung',
-  'help.backup.b1': 'Ändere die Sprache der Oberfläche und das helle/dunkle Design.',
+  'help.backup.b1': 'Wechsle zwischen hellem und dunklem Design.',
   'help.backup.b2':
     'Exportiere deine Spielstände als JSON-Datei zur Sicherheit (iOS kann Daten löschen) und importiere sie jederzeit wieder. Lesezeichen und Notizen sind enthalten.',
   'help.backup.b3':
@@ -297,7 +295,7 @@ export const de: Record<keyof typeof en, string> = {
 
   // Orientation gate
   'orient.rotate': 'Bitte ins Hochformat drehen',
-  'orient.hint': 'Einsamer Wolf ist für das Hochformat gedacht.',
+  'orient.hint': 'Die Kai-Chronik ist für das Hochformat gedacht.',
 
   // Lightbox
   'box.zoomOut': 'Verkleinern',
