@@ -29,6 +29,14 @@ fully **offline**.
   section) and with EPUBs that keep many numbered sections in one file, such as
   the German *Einsamer Wolf* edition: sections are found by their number-only
   headings and `sectN`/`levN` anchors.
+- **One section per page:** in EPUBs with many sections per file only the
+  current section is shown (a section split across two files is joined), and
+  ‹ / › step to the previous/next section number.
+- **Buttons in the text:** enemy stat lines get a "⚔️ Fight" button that opens
+  the combat helper pre-filled; "lose/regain N Endurance" gets a one-tap button;
+  "pick a number" opens the number generator. Nothing is applied without a tap.
+- **Pickers:** Kai Disciplines (and the Weaponskill weapon) are chosen with a tap
+  in the Action Chart; standard weapons can be added with a tap in the Backpack.
 - **Built-in help:** the ❓ *Guide* button in the library explains every
   feature (reader, Action Chart, combat helper, backups…).
 

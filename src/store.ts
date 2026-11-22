@@ -34,6 +34,9 @@ interface AppState {
   fontSize: number // percentuale per il reader
   lightboxSrc: string | null // immagine aperta a tutto schermo (object URL)
   lang: Lang // lingua UI (persistita in localStorage)
+  // Dati del nemico letti dal testo ("⚔️ Combatti"): precompilano il pannello
+  // Nuovo combattimento, restano modificabili e vengono azzerati all'avvio.
+  combatPrefill: { name: string; cs: number; en: number } | null
 
   // navigazione app
   openReader: (bookId: number, playthroughId: number) => Promise<void>
@@ -118,6 +121,7 @@ export const useStore = create<AppState>((set, get) => ({
   fontSize: loadFont(),
   lightboxSrc: null,
   lang: detectLang(),
+  combatPrefill: null,
 
   openReader: async (bookId, playthroughId) => {
     const pt = await db.playthroughs.get(playthroughId)

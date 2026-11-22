@@ -308,4 +308,16 @@ export const it: Record<keyof typeof en, string> = {
   'pagenav.backAria': 'Torna indietro nella cronologia',
   'pagenav.section': '🧭 Sezione',
   'pagenav.sectionAria': 'Vai alla sezione',
+
+  // Interactive helpers (chart pickers, in-text buttons)
+  'chart.kaiPick': 'Tocca per scegliere · {n} di {max}',
+  'chart.kaiWeapon': 'Arma per {name}',
+  'chart.kaiList': 'Annotate nel registro',
+  'common.quickAdd': 'Aggiunta rapida',
+  'inline.lose': '−{n} Resistenza',
+  'inline.gain': '+{n} Resistenza',
+  'inline.applied': '✓ applicato ({from} → {to})',
+  'inline.fight': '⚔️ Combatti: {name}',
+  'inline.draw': '🎲 Estrai un numero',
+  'inline.log': 'Resistenza {from} → {to} (dal testo)',
 }
