@@ -302,4 +302,16 @@ export const en = {
   'pagenav.backAria': 'Back in history',
   'pagenav.section': '🧭 Section',
   'pagenav.sectionAria': 'Go to section',
+
+  // Interactive helpers (chart pickers, in-text buttons)
+  'chart.kaiPick': 'Tap to choose · {n} of {max}',
+  'chart.kaiWeapon': 'Weapon for {name}',
+  'chart.kaiList': 'Entered on the chart',
+  'common.quickAdd': 'Quick add',
+  'inline.lose': '−{n} Endurance',
+  'inline.gain': '+{n} Endurance',
+  'inline.applied': '✓ applied ({from} → {to})',
+  'inline.fight': '⚔️ Fight: {name}',
+  'inline.draw': '🎲 Draw a number',
+  'inline.log': 'Endurance {from} → {to} (from the text)',
 }

@@ -315,4 +315,16 @@ export const de: Record<keyof typeof en, string> = {
   'pagenav.backAria': 'Im Verlauf zurück',
   'pagenav.section': '🧭 Abschnitt',
   'pagenav.sectionAria': 'Zu Abschnitt springen',
+
+  // Interactive helpers (chart pickers, in-text buttons)
+  'chart.kaiPick': 'Zum Auswählen antippen · {n} von {max}',
+  'chart.kaiWeapon': 'Waffe für {name}',
+  'chart.kaiList': 'Im Aktionsblatt eingetragen',
+  'common.quickAdd': 'Schnell hinzufügen',
+  'inline.lose': '−{n} Ausdauer',
+  'inline.gain': '+{n} Ausdauer',
+  'inline.applied': '✓ übernommen ({from} → {to})',
+  'inline.fight': '⚔️ Kampf: {name}',
+  'inline.draw': '🎲 Zufallszahl ziehen',
+  'inline.log': 'Ausdauer {from} → {to} (aus dem Text)',
 }
