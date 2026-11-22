@@ -52,6 +52,22 @@ export function setReaderControl(rendition: Rendition | null, sectionIndex: Sect
         injectImageZoom(view.document)
       }
     })
+    // La prima sezione può essere già stata renderizzata prima di questa chiamata
+    // (es. quando la prima costruzione dell'indice sezioni scandisce tutto lo spine):
+    // in quel caso 'rendered' è già scattato, quindi iniettiamo anche nei contenuti
+    // attualmente visibili. injectPageNav/injectImageZoom sono idempotenti.
+    try {
+      const contents = (rendition as unknown as { getContents?: () => Array<{ document?: Document }> })
+        .getContents?.()
+      for (const c of contents ?? []) {
+        if (c?.document) {
+          injectPageNav(c.document)
+          injectImageZoom(c.document)
+        }
+      }
+    } catch {
+      /* rendition non ancora pronto: ci penserà 'rendered' */
+    }
   }
 }
 

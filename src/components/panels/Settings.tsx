@@ -54,6 +54,7 @@ export function Settings({ onClose, persist }: { onClose: () => void; persist: P
             options={[
               { value: 'it', label: 'Italiano' },
               { value: 'en', label: 'English' },
+              { value: 'de', label: 'Deutsch' },
             ]}
             onChange={(v) => setLang(v)}
           />
