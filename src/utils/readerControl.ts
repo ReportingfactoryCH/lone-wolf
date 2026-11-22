@@ -93,6 +93,17 @@ function applyView(doc: Document, sectionIndex?: number) {
         if (!a) return
         const n = sectionFromHref(a.getAttribute('href'), control.sectionIndex)
         if (!n) return
+        // I link copiati dal file successivo (coda di un paragrafo spezzato) non
+        // hanno l'handler di epub.js: lasciati al browser porterebbero l'iframe a
+        // un URL relativo inesistente (404). Li gestiamo noi, registrando il salto.
+        if (a.closest('[data-lw-cont]')) {
+          e.preventDefault()
+          e.stopPropagation()
+          const st = useStore.getState()
+          st.addWarLog({ type: 'navigation', text: translate(st.lang, 'log.linkSection', { n }), section: n })
+          void navigateToSection(n)
+          return
+        }
         pendingSection = n
         if (docHasSection(doc, n)) {
           showSection(doc, n)

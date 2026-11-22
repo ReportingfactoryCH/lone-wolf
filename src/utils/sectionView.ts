@@ -98,6 +98,8 @@ export function appendContinuation(doc: Document, nextDoc: Document): boolean {
     const copy = doc.importNode(el, true) as Element
     copy.querySelectorAll('img, svg, image').forEach((i) => i.remove())
     copy.setAttribute(ATTR, last)
+    // Marcatore: i link qui dentro non hanno l'handler di epub.js (vedi readerControl).
+    copy.setAttribute('data-lw-cont', '')
     const hidden = anchor.hasAttribute(HIDE)
     if (hidden) copy.setAttribute(HIDE, '')
     after.after(copy)

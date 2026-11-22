@@ -12,29 +12,29 @@ export interface Discipline {
 }
 
 export const KAI_DISCIPLINES: Discipline[] = [
-  { id: 'camouflage', names: { it: 'Mimetismo', en: 'Camouflage', de: 'Tarnung' } },
-  { id: 'hunting', names: { it: 'Caccia', en: 'Hunting', de: 'Jagd' } },
-  { id: 'sixth-sense', names: { it: 'Sesto Senso', en: 'Sixth Sense', de: 'Sechster Sinn' } },
-  { id: 'tracking', names: { it: 'Orientamento', en: 'Tracking', de: 'Spurensuche' } },
-  { id: 'healing', names: { it: 'Guarigione', en: 'Healing', de: 'Heilung' } },
-  { id: 'weaponskill', names: { it: 'Arte del Combattimento', en: 'Weaponskill', de: 'Waffenkunde' } },
-  { id: 'mindshield', names: { it: 'Schermo Psichico', en: 'Mindshield', de: 'Gedankensperre' } },
-  { id: 'mindblast', names: { it: 'Assalto Psichico', en: 'Mindblast', de: 'Gedankenstrahl' } },
-  { id: 'animal-kinship', names: { it: 'Affinità Animale', en: 'Animal Kinship', de: 'Tierverständnis' } },
-  { id: 'mind-over-matter', names: { it: 'Telecinesi', en: 'Mind Over Matter', de: 'Geist über Materie' } },
+  { id: 'camouflage', names: { de: 'Tarnung' } },
+  { id: 'hunting', names: { de: 'Jagd' } },
+  { id: 'sixth-sense', names: { de: 'Sechster Sinn' } },
+  { id: 'tracking', names: { de: 'Spurensuche' } },
+  { id: 'healing', names: { de: 'Heilung' } },
+  { id: 'weaponskill', names: { de: 'Waffenkunde' } },
+  { id: 'mindshield', names: { de: 'Gedankensperre' } },
+  { id: 'mindblast', names: { de: 'Gedankenstrahl' } },
+  { id: 'animal-kinship', names: { de: 'Tierverständnis' } },
+  { id: 'mind-over-matter', names: { de: 'Geist über Materie' } },
 ]
 
 /** Armi della tabella di Waffenkunde/Weaponskill (Libro 1), senza doppioni. */
 export const WEAPONS: Array<{ id: string; names: Record<Lang, string> }> = [
-  { id: 'dagger', names: { it: 'Pugnale', en: 'Dagger', de: 'Dolch' } },
-  { id: 'spear', names: { it: 'Lancia', en: 'Spear', de: 'Speer' } },
-  { id: 'mace', names: { it: 'Mazza', en: 'Mace', de: 'Streitkolben' } },
-  { id: 'short-sword', names: { it: 'Daga', en: 'Short Sword', de: 'Kurzschwert' } },
-  { id: 'warhammer', names: { it: 'Martello da guerra', en: 'Warhammer', de: 'Kriegshammer' } },
-  { id: 'sword', names: { it: 'Spada', en: 'Sword', de: 'Schwert' } },
-  { id: 'axe', names: { it: 'Ascia', en: 'Axe', de: 'Axt' } },
-  { id: 'quarterstaff', names: { it: 'Bastone', en: 'Quarterstaff', de: 'Kampfstab' } },
-  { id: 'broadsword', names: { it: 'Spadone', en: 'Broadsword', de: 'Breitschwert' } },
+  { id: 'dagger', names: { de: 'Dolch' } },
+  { id: 'spear', names: { de: 'Speer' } },
+  { id: 'mace', names: { de: 'Streitkolben' } },
+  { id: 'short-sword', names: { de: 'Kurzschwert' } },
+  { id: 'warhammer', names: { de: 'Kriegshammer' } },
+  { id: 'sword', names: { de: 'Schwert' } },
+  { id: 'axe', names: { de: 'Axt' } },
+  { id: 'quarterstaff', names: { de: 'Kampfstab' } },
+  { id: 'broadsword', names: { de: 'Breitschwert' } },
 ]
 
 const norm = (s: string) => s.trim().toLowerCase()

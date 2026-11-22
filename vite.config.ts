@@ -45,9 +45,10 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
       },
       manifest: {
-        name: 'Lupo Solitario',
-        short_name: 'Lupo Solitario',
-        description: 'Reader PWA offline per gamebook Lupo Solitario / Lone Wolf',
+        name: 'Kai-Chronik',
+        short_name: 'Kai-Chronik',
+        description: 'Offline-Begleiter für Spielbücher: Leser, Aktionsblatt, Kampf und Protokoll',
+        lang: 'de',
         display: 'standalone',
         orientation: 'portrait',
         theme_color: '#1a1206',
